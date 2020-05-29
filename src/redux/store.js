@@ -20,8 +20,8 @@ const initialState = {
     tokenExist: false,
     token: '',
     userName: '',
-    email: 'altati44@gmail.com',
-    password: 'T@tic@44',
+    email: 'mmmm@gmail.com',
+    password: 'mmmm',
     messageBoxData: {
         message: '',
         open: false,
