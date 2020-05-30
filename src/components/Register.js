@@ -69,6 +69,7 @@ function Register(props) {
 
     const onRegisterUserSubmit = async (e) => {
         e.preventDefault();
+        //console.log(props.userName)
         const res = await axios.post('http://localhost:5000/api/signup', {
 
             "username": props.userName,
@@ -186,6 +187,7 @@ function Register(props) {
                             if (fieldsCorrect()) {
                                 onRegisterUserSubmit(e);
                                 props.registerFormClose();
+                                if (!props.isLoggedIn) props.loginFormOpen();
                             } else props.messageOpen('Error en las entradas...', 'error')
                         }
                         } color="primary" autoFocus>
@@ -202,12 +204,14 @@ function Register(props) {
 
 
 const mapStateToProps = state => ({
+    userName: state.userName,
     email: state.email,
     password: state.password,
     register: state.register,
     emailValid: state.emailValid,
     passwordValid: state.passwordValid,
     showLogin: state.showLogin,
+    isLoggedIn: state.isLoggedIn,
     showRegister: state.showRegister,
     passwordVisible: state.passwordVisible,
     validEmailRegExp: state.validEmailRegExp

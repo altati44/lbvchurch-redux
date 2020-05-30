@@ -100,26 +100,6 @@ function ScrollTop(props) {
 function App(props) {
   const classes = useStyles();
 
-  //nueva forma de mostrar los mensajes de info
-
-  const [bit, setBit] = React.useState(0);
-
-  const MyButton = () => {
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
-    const handleClick = () => {
-      enqueueSnackbar('I love hooks');
-
-
-    };
-
-    return (
-      <Button onClick={handleClick}>Show new Info</Button>
-
-    );
-  }
-  //...
-
   //usado por el MessageBox
   const success = "#4caf50";
   const information = "#2196f3";
@@ -201,6 +181,7 @@ function App(props) {
         {!props.isLoggedIn && <Login />}
         {(!props.isLoggedIn && props.register) && <Register />}
 
+
       </div>
       <Router>
         <SnackbarProvider
@@ -249,7 +230,7 @@ function App(props) {
                           console.log(Boolean(Number(intToBitString(9, 8, true)[0])))
                         }}
                       >LOGIN
-                         <Input id="testingBit" type='text' onChange={(e) => { setBit(e.target.value) }}></Input>
+                         <Input id="testingBit" type='text' onChange={(e) => { }}></Input>
 
                       </Paper>
                     </Grid>
@@ -263,7 +244,7 @@ function App(props) {
                     </Grid>
                     <Grid item xs={3}>
                       <Paper className={classes.paper}>
-                        <MyButton>HOLA NEW INFO</MyButton>
+                        <Button>HOLA NEW INFO</Button>
                       </Paper>
                     </Grid>
                     <Grid item xs={3}>

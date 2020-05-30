@@ -2,11 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 //import * as serviceWorker from './serviceWorker';
-import { SnackbarProvider } from 'notistack';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import Slide from '@material-ui/core/Slide';
+
 
 import store from './redux/store';
 import { Provider } from 'react-redux';

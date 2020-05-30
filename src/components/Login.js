@@ -58,6 +58,7 @@ function Login(props) {
             password: props.password
         });
         if (res.data.success === 1) {
+            console.log(res.data.result[0].user_name)
             props.messageOpen(res.data.message, 'success')
             props.updateToken(res.data.token)
             props.loggedIn();
