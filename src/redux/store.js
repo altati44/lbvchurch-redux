@@ -32,7 +32,21 @@ const initialState = {
             warning: '#ff9800',
             error: '#f50057'
         }
-    }
+    },
+    datos: [
+        {
+            friend_id: "",
+            firstname: "",
+            middlename: "",
+            lastname: ""
+        }
+    ]
+    ,
+    Columns: [
+        { title: "First Name", field: "firstname" },
+        { title: "Middle Name", field: "middlename" },
+        { title: "Last Name", field: "lastname" }
+    ]
 };
 
 export default createStore(

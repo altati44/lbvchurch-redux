@@ -46,29 +46,40 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+/**
+axios.post(url, {
+  headers: {
+    'Authorization': `Basic ${token}`
+  }
+})
+*/
+
 function Login(props) {
 
     const classes = useStyles();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        axios.defaults.headers.common['Authorization'] = '';
-        const res = await axios.post('http://localhost:5000/api/signin', {
-            email: props.email,
-            password: props.password
-        });
-        if (res.data.success === 1) {
-            console.log(res.data.result[0].user_name)
-            props.messageOpen(res.data.message, 'success')
-            props.updateToken(res.data.token)
-            props.loggedIn();
-            props.loginFormClose();
-            console.log('loginFormCLose')
+        try {
+            axios.defaults.headers.common['Authorization'] = '';
+            const res = await axios.post('http://localhost:5000/api/signin', {
+                email: props.email,
+                password: props.password
+            });
+            if (res.data.success === 1) {
+                //console.log(res.data.result[0].user_name)
+                props.messageOpen(res.data.user.name + ' ' + res.data.message, 'success')
+                props.updateToken(res.data.token)
+                props.loggedIn();
+                props.loginFormClose();
+                console.log('loginFormCLose')
 
-        } else {
-            props.messageOpen(res.data.data, 'error')
-            console.log(res.data.data)
-        }
+            } else {
+                props.messageOpen(res.data.data, 'error')
+                console.log(res.data.data)
+            }
+
+        } catch{ props.messageOpen('Connection refused.', 'error') }
     }
 
     const handleMouseDownPassword = (event) => {
@@ -77,9 +88,6 @@ function Login(props) {
 
     return (
         <div>
-            <Button variant="outlined" color="primary" onClick={props.loginFormOpen}>
-                Open Login Form
-      </Button>
             <Dialog
                 style={{ top: -500 }}
                 open={props.showLogin}

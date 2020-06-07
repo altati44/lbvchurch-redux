@@ -26,6 +26,7 @@ import Slide from '@material-ui/core/Slide';
 
 import Login from './components/Login';
 import MessageBox from './components/MessageBox';
+import DentroDelDivApp from './components/DentroDelDivApp'
 //import InputAdornment from '@material-ui/core/InputAdornment';
 
 //import { SnackbarProvider, useSnackbar } from 'notistack';
@@ -37,6 +38,7 @@ import { connect } from "react-redux";
 import Register from './components/Register';
 import TableTest from './components/TableTest';
 import Input from '@material-ui/core/Input';
+import RemoteTable from './components/RemoteTable'
 
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -65,6 +67,13 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(2),
     backgroundColor: '#2196f3',
+  },
+  toolbar2: {
+    minHeight: 128,
+    alignItems: 'flex-start',
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(2),
+    //backgroundColor: '#2196f3',
   },
 }));
 
@@ -184,131 +193,92 @@ function App(props) {
 
       </div>
       <Router>
-        <SnackbarProvider
-          maxSnack={5}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-          TransitionComponent={Slide}
-          autoHideDuration={4000}
-          action={
-            <React.Fragment>
-              <IconButton size="small" aria-label="close" color="inherit"
-                onClick={() => console.log('closing')}>
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </React.Fragment>
-          }
 
-        >
-          <React.Fragment>
-            <CssBaseline />
-            <AppBar>
-              <div>
+        <React.Fragment>
+          <CssBaseline />
+          <AppBar>
+            <div>
 
-                <Toolbar className={classes.toolbar}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={3}>
+              <Toolbar className={classes.toolbar}>
+                <Grid container spacing={2}>
+                  <Grid item xs={3}>
 
-                      <Paper className={classes.paper}
+                    <Paper className={classes.paper}
 
-                        onClick={() => {
-                          function binaries(num1) {
-                            var str = num1.toString(2)
-                            return str;
-                          }
+                      onClick={() => {
+                        function binaries(num1) {
+                          var str = num1.toString(2)
+                          return str;
+                        }
 
-                          props.loginFormOpen()
-                          //console.log(bitStringToInt('0111',16,true))
-                          let bite = 256;
-                          //console.log(bite + ' to binary: ' + bite.toString(2));
+                        props.loginFormOpen()
+                        //console.log(bitStringToInt('0111',16,true))
+                        let bite = 256;
+                        //console.log(bite + ' to binary: ' + bite.toString(2));
 
-                          console.log(' to String: ' + intToBitString(9, 8, true));
-                          console.log(' to Integer: ' + bitStringToInt('1111', 8, true));
+                        console.log(' to String: ' + intToBitString(9, 8, true));
+                        console.log(' to Integer: ' + bitStringToInt('1111', 8, true));
 
-                          console.log(Boolean(Number(intToBitString(9, 8, true)[0])))
-                        }}
-                      >LOGIN
+                        console.log(Boolean(Number(intToBitString(9, 8, true)[0])))
+                      }}
+                    >LOGIN
                          <Input id="testingBit" type='text' onChange={(e) => { }}></Input>
 
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={6}>
-                      {props.mostrar && (
-                        <Paper className={classes.paper} onClick={() => {
-
-                        }}>MOSTRAR</Paper>
-                      )
-                      }
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper className={classes.paper}>
-                        <Button>HOLA NEW INFO</Button>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography variant="h4">Lake Buena Vista Friends</Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                    </Grid>
-                  </Grid>
-                </Toolbar>
-              </div>
-
-            </AppBar>
-
-            <Container maxWidth="xl">
-              <Toolbar className={classes.toolbar} id="main-bar" />{/**solo para regresar el scroll */}
-
-              <div >      {/*div del SimpleSnackBar*/}
-                <MessageBox
-                  on_Close={props.messageClose}
-                  on_Open={props.messageBoxData.open}
-                  body_message={props.messageBoxData.message}
-                  type_message={props.messageBoxData.smsType}
-                />
-              </div>
-              <div>
-
-                <Grid container spacing={2}>
-                  <Grid item xs={12} /> {/**para separar el contenido de la barra de menu */}
-                  <Grid item xs={8}>
-                    {/*dentro va la tabla*/}
-                    <Paper className={classes.paper} style={{ backgroundColor: 'black', boxShadow: 'none' }}>
-                      <Box my={2} style={{ padding: 'none', boxShadow: 'none' }} ></Box>
-                      <Box my={2} style={{ padding: 'none', boxShadow: 'none' }} >
-
-                        <TableTest />
-
-
-                      </Box>
                     </Paper>
-
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid item xs={6}>
+                    {props.mostrar && (
+                      <Paper className={classes.paper} onClick={() => {
+
+                      }}>MOSTRAR</Paper>
+                    )
+                    }
+                  </Grid>
+                  <Grid item xs={3}>
                     <Paper className={classes.paper}>
-                      <Box my={2} color="success.main">
-                        {/*<ShoppingCart />*/}
-
-                      </Box>
+                      <Button>HOLA NEW INFO</Button>
                     </Paper>
-
+                  </Grid>
+                  <Grid item xs={3}>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="h4">Lake Buena Vista Friends</Typography>
+                  </Grid>
+                  <Grid item xs={3}>
                   </Grid>
                 </Grid>
-              </div>
-            </Container>
-            <ScrollTop {...props}>
-              <Fab color="secondary" size="small" aria-label="scroll back to top">
-                <KeyboardArrowUpIcon />
-              </Fab>
-            </ScrollTop>
-          </React.Fragment>
-        </SnackbarProvider>
+              </Toolbar>
+            </div>
+
+          </AppBar>
+
+          <Container maxWidth="xl">
+            <Toolbar className={classes.toolbar2} id="main-bar" />{/**solo para regresar el scroll */}
+
+            <div >      {/*div del SimpleSnackBar*/}
+              <MessageBox
+                on_Close={props.messageClose}
+                on_Open={props.messageBoxData.open}
+                body_message={props.messageBoxData.message}
+                type_message={props.messageBoxData.smsType}
+              />
+            </div>
+            <div>{/**EN ESTE DIV VA EL CONTENIDO A MOSTRAR DE TODAS LAS PAGINAS O COMPONENTES */}
+              {/*<DentroDelDivApp />*/}
+              <RemoteTable />
+
+
+            </div>{/**FIN DEL DIV PARA MOSTRAR EL CONTENIDO */}
+          </Container>
+          <ScrollTop {...props}>
+            <Fab color="secondary" size="small" aria-label="scroll back to top">
+              <KeyboardArrowUpIcon />
+            </Fab>
+          </ScrollTop>
+        </React.Fragment>
+
       </Router>
-    </div>
+    </div >
   );
 }
 

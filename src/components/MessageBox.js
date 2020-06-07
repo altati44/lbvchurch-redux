@@ -33,7 +33,7 @@ const MessageBox = (props) => {
             >
                 <SnackbarContent style={{
                     backgroundColor: props.messageBoxData.smsType,
-                    height: 'auto', /*lineHeight: '28px', whiteSpace: 'pre-line'*/ padding: 24
+                    height: 'auto', /*lineHeight: '28px', whiteSpace: 'pre-line' padding: 24*/
 
                 }}
 

@@ -36,7 +36,7 @@ const reducer = (state = {}, action) => {
                 emailValid: state.validEmailRegExp.test(action.email)
             }
         case 'CHECK_PASSWORD':
-            console.log(action.password.length + '>>>pasa')
+            //console.log(action.password.length + '>>>pasa')
             return {
                 ...state,
                 passwordValid: action.password.length >= 6
@@ -131,9 +131,15 @@ const reducer = (state = {}, action) => {
                 password: !state.tokenExist ? '' : state.password,
                 email: !state.tokenExist ? '' : state.email
             }
+        case "SET_FRIENDS_DATA":
+            return {
+                ...state,
+                datos: action.datos
+            }
 
         default: return state;
     }
+
 };
 
 export default reducer;
