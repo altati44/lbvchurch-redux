@@ -33,16 +33,9 @@ const initialState = {
             error: '#f50057'
         }
     },
-    datos: [
-        {
-            friend_id: "",
-            firstname: "",
-            middlename: "",
-            lastname: ""
-        }
-    ]
-    ,
-    Columns: [
+    datico: [],
+    friends: {},
+    columns: [
         { title: "First Name", field: "firstname" },
         { title: "Middle Name", field: "middlename" },
         { title: "Last Name", field: "lastname" }

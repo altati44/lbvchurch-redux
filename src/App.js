@@ -42,6 +42,7 @@ import RemoteTable from './components/RemoteTable'
 
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import axios from 'axios'
 
 //import store from './redux/store'
 
@@ -182,6 +183,38 @@ function App(props) {
   }
   //..........................................
 
+  function FillTable() {
+    axios
+      .get("http://localhost:5000/api/friends")
+      .then(res => {
+
+        let data = [];
+        props.setFriendsData(res.data.result);
+        /*
+                        res.data.result.forEach(record => {
+                            data.push({
+                                friend_id: record.friend_id,
+                                firstname: record.firstname,
+                                middlename: record.middlename,
+                                lastname: record.lastname
+                            });
+                            console.log(data)
+                        });
+        
+                        console.log('props.data ANTES')
+                        console.log(data)
+                        console.log(props.data);
+                        //setEntries({ data: data });
+                        //props.setDatos(data);
+                        console.log('props.data DESPUES')
+                        console.log(props.data);
+                        */
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
 
   return (
     <div>
@@ -206,6 +239,7 @@ function App(props) {
                     <Paper className={classes.paper}
 
                       onClick={() => {
+                        FillTable();
                         function binaries(num1) {
                           var str = num1.toString(2)
                           return str;
@@ -236,7 +270,9 @@ function App(props) {
                   </Grid>
                   <Grid item xs={3}>
                     <Paper className={classes.paper}>
-                      <Button>HOLA NEW INFO</Button>
+                      <Button onClick={() => {
+                        //props.setFriendsData(res.data.result);
+                      }}>HOLA NEW INFO</Button>
                     </Paper>
                   </Grid>
                   <Grid item xs={3}>
@@ -315,7 +351,13 @@ const mapDispatchToProps = dispatch => ({
     dispatch({
       type: "LOGIN_FORM_OPEN"
     })
-  }
+  },
+  setFriendsData(data) {
+    dispatch({
+      type: "SET_FRIENDS_DATA",
+      data
+    })
+  },
 });
 
 

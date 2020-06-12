@@ -72,7 +72,8 @@ function Login(props) {
                 props.updateToken(res.data.token)
                 props.loggedIn();
                 props.loginFormClose();
-                console.log('loginFormCLose')
+                console.log('EJECUTANDO...loginFormCLose');
+
 
             } else {
                 props.messageOpen(res.data.data, 'error')

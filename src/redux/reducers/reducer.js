@@ -134,7 +134,19 @@ const reducer = (state = {}, action) => {
         case "SET_FRIENDS_DATA":
             return {
                 ...state,
-                datos: action.datos
+                friends: {
+                    ...state.friends,
+                    data: action.data
+                }
+            }
+        case "UPDATE_FRIENDS_DATA":
+            return {
+                ...state,
+                friends: {
+                    ...state.friends,
+                    data: state.friends.data[action.index] = action.data,
+                    data: state.friends.data
+                }
             }
 
         default: return state;
