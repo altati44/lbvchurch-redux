@@ -3,6 +3,12 @@ import MaterialTable from 'material-table';
 import { forwardRef } from 'react';
 import { connect } from "react-redux";
 
+import Grid from '@material-ui/core/Grid';
+
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -21,6 +27,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 
@@ -49,12 +57,12 @@ const tableIcons = {
 const theme = createMuiTheme({
     palette: {
         primary: {
-            main: '#4caf50',
+            main: '#304ffe',//'#4caf50',
         },
         secondary: {
-            main: '#ff9100',
+            main: '#448aff',//'#ff9100',
         },
-        fontSize: "18",
+        //fontSize: "18",
 
 
     }
@@ -113,104 +121,173 @@ function RemoteTable(props) {
 
 
     return (
-        <MaterialTable
-            title="Friends list..."
-            icons={tableIcons}
-            columns={props.columns}
-            data={entries.data}
-            editable={{
+        <Grid container spacing={2}>
+            <Grid item xs={12} /> {/**para separar el contenido de la barra de menu */}
+            <Grid item xs={8}>
+                {/*dentro va la tabla*/}
+                <Paper style={{ backgroundColor: 'black', boxShadow: 'none' }}>
+                    <Box my={2} style={{ padding: 'none', boxShadow: 'none' }} ></Box>
+                    <Box my={2} style={{ padding: 'none', boxShadow: 'none' }} >
+                        <MuiThemeProvider theme={theme}>
+                            <MaterialTable
+                                title="Friends list..."
+                                icons={tableIcons}
+                                columns={props.columns}
+                                data={entries.data}
+                                // other props
+                                localization={{
+                                    pagination: {
+                                        labelDisplayedRows: '{from}-{to} of {count}'
+                                    },
+                                    toolbar: {
+                                        nRowsSelected: '{0} row(s) selected'
+                                    },
+                                    header: {
+                                        actions: 'ACTIONS',
 
-                /**La parte que dice para redux es para guaradr y actualizar la informacion de la 
-                 * tabla en data de la store, lo tengo comentado porque para que me funcione tengo
-                 * que llamar despues de updateFriendsData a setFriendsData para que los cambios 
-                 * se reflejen en la tabla y eso renderiza dos veces la tabla, ... tengo que arreglarlo
-                 */
-                onRowUpdate: (newData, oldData) =>
-                    new Promise(resolve => {
-                        setTimeout(() => {
-                            resolve();
-                            //para redux
-                            //const data = props.data;
 
-                            //para state
-                            const data = [...entries.data];
-
-                            const index = data.indexOf(oldData);
-                            data[index] = newData;
-                            const fields = Object.assign({}, newData);
-                            delete fields.tableData; //tableData de material-table, un campo con informacion
-                            delete fields.friend_id; //borro pq no lo necesito y es autoincrementable y clave primaria
-                            delete fields.created_at;//ignoro created_at
-                            axios
-                                .put("http://localhost:5000/api/friends/" + oldData.friend_id, fields)
-                                .then(res => {
-                                    //para redux                                    
-                                    //props.updateFriendsData(newData, index);
-                                    //props.setFriendsData(data);
-                                    //para state
-                                    setEntries({ ...entries, data });
-
-                                    console.log('entries.data')
-                                    console.log(entries.data);
-                                    props.messageOpen(res.data.message, 'success');
-                                });
-
-                        }, 600);
-                    }),
-                onRowDelete: oldData =>
-                    new Promise(resolve => {
-                        setTimeout(() => {
-                            resolve();
-                            const data = [...entries.data];
-                            //data.splice(data.indexOf(oldData), 1);
-                            //console.log(oldData.friend_id);
-                            axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxMDgsIm5hbWUiOiJubm5uIiwiZW1haWwiOiJubm5uQGdtYWlsLmNvbSJ9LCJpYXQiOjE1OTEyMzExMDksImV4cCI6MTU5MTMxNzUwOX0.y-Rwt5eyuHCJ-rdHRxJZvXBEdB3C4rw6ZJmEIjFB5sI';
-                            axios
-                                .delete("http://localhost:5000/api/friends/" + oldData.friend_id)
-                                .then((res) => {
-                                    if (res.data.success == 1) {
-                                        //console.log(res.data.success)
-                                        data.splice(data.indexOf(oldData), 1);
-                                        setEntries({ ...entries, data });
-                                        props.setFriendsData(data);
-                                        console.log(entries.data);
-                                        props.messageOpen(res.data.message, 'success');
+                                    },
+                                    body: {
+                                        emptyDataSourceMessage: 'No records to display',
+                                        filterRow: {
+                                            filterTooltip: 'Filter'
+                                        }
                                     }
-                                });
+                                }}/*
+                            components={{
+                                Action: props => <Button onClick={() => props.onClick()}>My Button</Button>
+                            }}*/
+                                actions={[
+                                    {
+                                        tooltip: 'Remove All Selected Rows',
+                                        icon: tableIcons.Delete,
+                                        onClick: (evt, data) => console.log(data)
+                                    },
+                                    {
+                                        tooltip: 'Export All Selected Rows',
+                                        icon: tableIcons.Export,
+                                        onClick: (evt, data) => console.log(data)
+                                    }
+
+                                ]}
+                                options={{
+                                    search: true,
+                                    selection: true,
+                                    toolbar: true,
+                                    showTitle: false,
+                                    headerStyle: { padding: '4px 8px 4px 8px' },
+                                    paginationType: 'stepped',
+                                    exportButton: true,
+                                    printButton: true,
+                                    searchAutoFocus: true,
+                                    headerStyle: {
+                                        color: '#9e9e9e',
+                                        backgroundColor: '#ffe0b2',
+                                        hoverColor: 'white'
+                                    }
+                                }}
+                                editable={{
+
+                                    /**La parte que dice para redux es para guaradr y actualizar la informacion de la 
+                                     * tabla en data de la store, lo tengo comentado porque para que me funcione tengo
+                                     * que llamar despues de updateFriendsData a setFriendsData para que los cambios 
+                                     * se reflejen en la tabla y eso renderiza dos veces la tabla, ... tengo que arreglarlo
+                                     */
+                                    onRowUpdate: (newData, oldData) =>
+                                        new Promise(resolve => {
+                                            setTimeout(() => {
+                                                resolve();
+                                                //para redux
+                                                //const data = props.data;
+
+                                                //para state
+                                                const data = [...entries.data];
+
+                                                const index = data.indexOf(oldData);
+                                                data[index] = newData;
+                                                const fields = Object.assign({}, newData);
+                                                delete fields.tableData; //tableData de material-table, un campo con informacion
+                                                delete fields.friend_id; //borro pq no lo necesito y es autoincrementable y clave primaria
+                                                delete fields.created_at;//ignoro created_at
+                                                axios
+                                                    .put("http://localhost:5000/api/friends/" + oldData.friend_id, fields)
+                                                    .then(res => {
+                                                        //para redux                                    
+                                                        //props.updateFriendsData(newData, index);
+                                                        //props.setFriendsData(data);
+                                                        //para state
+                                                        setEntries({ ...entries, data });
+
+                                                        console.log('entries.data')
+                                                        console.log(entries.data);
+                                                        props.messageOpen(res.data.message, 'success');
+                                                    });
+
+                                            }, 600);
+                                        }),
+                                    onRowDelete: oldData =>
+                                        new Promise(resolve => {
+                                            setTimeout(() => {
+                                                resolve();
+                                                const data = [...entries.data];
+                                                //data.splice(data.indexOf(oldData), 1);
+                                                //console.log(oldData.friend_id);
+                                                axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxMDgsIm5hbWUiOiJubm5uIiwiZW1haWwiOiJubm5uQGdtYWlsLmNvbSJ9LCJpYXQiOjE1OTEyMzExMDksImV4cCI6MTU5MTMxNzUwOX0.y-Rwt5eyuHCJ-rdHRxJZvXBEdB3C4rw6ZJmEIjFB5sI';
+                                                axios
+                                                    .delete("http://localhost:5000/api/friends/" + oldData.friend_id)
+                                                    .then((res) => {
+                                                        if (res.data.success == 1) {
+                                                            //console.log(res.data.success)
+                                                            data.splice(data.indexOf(oldData), 1);
+                                                            setEntries({ ...entries, data });
+                                                            props.setFriendsData(data);
+                                                            console.log(entries.data);
+                                                            props.messageOpen(res.data.message, 'success');
+                                                        }
+                                                    });
 
 
-                        }, 600);
-                    }),
-                /*onRowAdd: (newData) =>
-                    new Promise((resolve) => {
-                        setTimeout(() => {
-                            resolve();
-                            const data = [...entries.data];
-                            //console.log(newData);
-                            axios.defaults.headers.common['Authorization'] = `Bearer ${props.token}`;
-                            axios
-                                .post('http://localhost:5000/api/friends/', newData)
-                                .then((res) => {
-                                    if (res.data.success != 0) {
-                                        const fields = Object.assign({}, newData);
-                                        const ii = newData["tableData"]
-                                        //.forEach(element => console.log(element));
-                                        //console.log(tableData.id);
-                                        //const fields = Object.assign({}, newData);
+                                            }, 600);
+                                        }),
+                                    onRowAdd: (newData) =>
+                                        new Promise((resolve) => {
+                                            setTimeout(() => {
+                                                resolve();
+                                                const data = [...entries.data];
+                                                //console.log(newData);
+                                                axios.defaults.headers.common['Authorization'] = `Bearer ${props.token}`;
+                                                axios
+                                                    .post('http://localhost:5000/api/friends/', newData)
+                                                    .then((res) => {
+                                                        if (res.data.success != 0) {
+                                                            const fields = Object.assign({}, newData);
+                                                            const ii = newData["tableData"]
+                                                            //.forEach(element => console.log(element));
+                                                            //console.log(tableData.id);
+                                                            //const fields = Object.assign({}, newData);
+                                                            console.log(newData)
+                                                            data.push(newData);
+                                                            const index = data.indexOf(newData);
+                                                            const newField = { "friend_id": res.data.id }
+                                                            data[index] = { "friend_id": res.data.id, ...data[index] };
+                                                            //const resData = [...data, data.push(newData)];                                        
+                                                            setEntries({ ...entries, data });
+                                                            props.messageOpen(res.data.message, 'success');
+                                                        } else props.messageOpen(res.data.message, 'error');
+                                                    });
+                                            }, 600);
+                                        }),
+                                }}
+                            />
+                        </MuiThemeProvider>
 
-                                        data.push(newData);
-                                        const index = data.indexOf(newData);
-                                        const newField = { "friend_id": res.data.id }
-                                        data[index] = { "friend_id": res.data.id, ...data[index] };
-                                        //const resData = [...data, data.push(newData)];                                        
-                                        setEntries({ ...entries, data });
-                                        props.messageOpen(res.data.message, 'success');
-                                    } else props.messageOpen(res.data.message, 'error');
-                                });
-                        }, 600);
-                    }),*/
-            }}
-        />
+
+                    </Box>
+                </Paper>
+
+            </Grid>
+        </Grid>
+
     );
 }
 
