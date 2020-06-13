@@ -181,7 +181,7 @@ function RemoteTable(props) {
                                     printButton: true,
                                     searchAutoFocus: true,
                                     headerStyle: {
-                                        color: '#9e9e9e',
+                                        color: '#7986cb',
                                         backgroundColor: '#ffe0b2',
                                         hoverColor: 'white'
                                     }
