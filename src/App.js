@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: 'none'
   },
   toolbar: {
-    minHeight: 128,
+    //minHeight: 128,
     alignItems: 'flex-start',
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(2),
@@ -92,8 +92,6 @@ function ScrollTop(props) {
     }
   };
 
-
-
   return (
     <Zoom in={trigger}>
       <div onClick={handleClick} role="presentation" className={classes.root}>
@@ -110,49 +108,6 @@ function ScrollTop(props) {
 function App(props) {
   const classes = useStyles();
 
-  //usado por el MessageBox
-  const success = "#4caf50";
-  const information = "#2196f3";
-  const warning = "#ff9800";
-  const error = "#f50057";
-
-  const [open, setOpen] = React.useState(false);
-  const [message, setMessage] = React.useState('Success!');
-  const [type, setType] = React.useState(success);
-
-  const handleClick = (sms, smsType) => {
-    setMessage(sms);//pongo el mensage
-    setType(smsType);
-    console.log({ type })
-    setOpen(true);
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
-  //hasta aqui para el MessageBox
-
-  //NO LA USO PQ RENDERIZA EL FORM AUNQUE SEA EL MISMO
-  /*
-  function LoggedStatus() {
-    if (!props.isLoggedIn) {//nadie se ha logeado, mantengo los forms
-      console.log('login')
-      return <Login />
-    } else {
-      if (props.login && props.showLogin) {
-        console.log('login')
-        //return null
-      }
-      if (props.register) {
-        console.log('register')
-        //return <Register />
-      }
-    }
-  }
-  */
   //Dos funciones para tratar los permisos de read, update, add y delete 
   //para mostrar los modulos correspondientes...
   function intToBitString(input, size, unsigned) {
@@ -183,37 +138,6 @@ function App(props) {
   }
   //..........................................
 
-  function FillTable() {
-    axios
-      .get("http://localhost:5000/api/friends")
-      .then(res => {
-
-        let data = [];
-        props.setFriendsData(res.data.result);
-        /*
-                        res.data.result.forEach(record => {
-                            data.push({
-                                friend_id: record.friend_id,
-                                firstname: record.firstname,
-                                middlename: record.middlename,
-                                lastname: record.lastname
-                            });
-                            console.log(data)
-                        });
-        
-                        console.log('props.data ANTES')
-                        console.log(data)
-                        console.log(props.data);
-                        //setEntries({ data: data });
-                        //props.setDatos(data);
-                        console.log('props.data DESPUES')
-                        console.log(props.data);
-                        */
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
 
 
   return (
@@ -234,47 +158,7 @@ function App(props) {
 
               <Toolbar className={classes.toolbar}>
                 <Grid container spacing={2}>
-                  <Grid item xs={3}>
 
-                    <Paper className={classes.paper}
-
-                      onClick={() => {
-                        FillTable();
-                        function binaries(num1) {
-                          var str = num1.toString(2)
-                          return str;
-                        }
-
-                        props.loginFormOpen()
-                        //console.log(bitStringToInt('0111',16,true))
-                        let bite = 256;
-                        //console.log(bite + ' to binary: ' + bite.toString(2));
-
-                        console.log(' to String: ' + intToBitString(9, 8, true));
-                        console.log(' to Integer: ' + bitStringToInt('1111', 8, true));
-
-                        console.log(Boolean(Number(intToBitString(9, 8, true)[0])))
-                      }}
-                    >LOGIN
-                         <Input id="testingBit" type='text' onChange={(e) => { }}></Input>
-
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={6}>
-                    {props.mostrar && (
-                      <Paper className={classes.paper} onClick={() => {
-
-                      }}>MOSTRAR</Paper>
-                    )
-                    }
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Paper className={classes.paper}>
-                      <Button onClick={() => {
-                        //props.setFriendsData(res.data.result);
-                      }}>HOLA NEW INFO</Button>
-                    </Paper>
-                  </Grid>
                   <Grid item xs={3}>
                   </Grid>
                   <Grid item xs={6}>
@@ -299,9 +183,10 @@ function App(props) {
                 type_message={props.messageBoxData.smsType}
               />
             </div>
-            <div>{/**EN ESTE DIV VA EL CONTENIDO A MOSTRAR DE TODAS LAS PAGINAS O COMPONENTES */}
+            {/**EN EL SIGUIENTE DIV VA EL CONTENIDO A MOSTRAR DE TODAS LAS PAGINAS O COMPONENTES */}
+            <div>
               {/*<DentroDelDivApp />*/}
-              <RemoteTable />
+
 
 
             </div>{/**FIN DEL DIV PARA MOSTRAR EL CONTENIDO */}
