@@ -56,27 +56,32 @@ function Login(props) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            axios.defaults.headers.common['Authorization'] = '';
-            const res = await axios.post('http://localhost:5000/api/signin', {
-                email: props.email,
-                password: props.password
-            });
-            if (res.data.success === 1) {
-                //console.log(res.data.result[0].user_name)
-                props.messageOpen(res.data.user.name + ' ' + res.data.message, 'success')
-                props.updateToken(res.data.token)
-                props.loggedIn();
-                props.loginFormClose();
-                console.log('EJECUTANDO...loginFormCLose');
+        props.checkEmail(props.email); props.checkPassword(props.password);
+        //console.log(props.emailValid + ':' + props.passwordValid)
+        if (props.emailValid && props.passwordValid) {
+            console.log(props.emailValid + ':' + props.passwordValid)
+            try {
+                axios.defaults.headers.common['Authorization'] = '';
+                const res = await axios.post('http://localhost:5000/api/signin', {
+                    email: props.email,
+                    password: props.password
+                });
+                if (res.data.success === 1) {
+                    //console.log(res.data.result[0].user_name)
+                    props.messageOpen(res.data.user.name + ' ' + res.data.message, 'success')
+                    props.updateToken(res.data.token)
+                    props.loggedIn(res.data.user.name);
+                    props.loginFormClose();
+                    console.log('EJECUTANDO...loginFormCLose');
 
 
-            } else {
-                props.messageOpen(res.data.data, 'error')
-                console.log(res.data.data)
-            }
+                } else {
+                    props.messageOpen(res.data.data, 'error')
+                    console.log(res.data.data)
+                }
 
-        } catch{ props.messageOpen('Connection refused.', 'error') }
+            } catch{ props.messageOpen('Connection refused.', 'error') }
+        } else props.messageOpen('Invalid entries...', 'error');
     }
 
     const handleMouseDownPassword = (event) => {
@@ -183,7 +188,9 @@ const mapStateToProps = state => ({
     showLogin: state.showLogin,///////////////////repetido aqui
     password: state.password,
     email: state.email,
-    passwordVisible: state.passwordVisible
+    passwordVisible: state.passwordVisible,
+    emailValid: state.emailValid,
+    passwordValid: state.passwordValid
 });
 
 //actualiza la forma como saldra el mensaje
@@ -195,9 +202,10 @@ const mapDispatchToProps = dispatch => ({
             smsType
         })
     },
-    loggedIn() {
+    loggedIn(userName) {
         dispatch({
-            type: "LOGGED_IN"
+            type: "LOGGED_IN",
+            userName
         })
     },
     loginFormClose() {
@@ -237,10 +245,20 @@ const mapDispatchToProps = dispatch => ({
             type: "UPDATE_TOKEN",
             token
         })
-    }
+    },
+    checkEmail(email) {
+        dispatch({
+            type: "CHECK_EMAIL",
+            email
+        })
+    },
+    checkPassword(password) {
+        dispatch({
+            type: "CHECK_PASSWORD",
+            password
+        })
+    },
 });
-
-
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -28,6 +28,17 @@ const reducer = (state = {}, action) => {
                 register: !state.register,
                 mostrar: false
             }
+        case "LOG_OUT":
+            return {
+                ...state,
+                login: !state.login,
+                register: !state.register,
+                userName: '',
+                isLoggedIn: false,
+                showLogin: true,
+                tokenExist: false,
+                token: ''
+            }
         case 'CHECK_EMAIL':
             //const validEmailRegExp = RegExp(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i);
 
@@ -36,7 +47,7 @@ const reducer = (state = {}, action) => {
                 emailValid: state.validEmailRegExp.test(action.email)
             }
         case 'CHECK_PASSWORD':
-            //console.log(action.password.length + '>>>pasa')
+            console.log(action.password.length + '>>>pasa')
             return {
                 ...state,
                 passwordValid: action.password.length >= 6
@@ -62,7 +73,8 @@ const reducer = (state = {}, action) => {
         case "LOGGED_IN":
             return {
                 ...state,
-                isLoggedIn: true
+                isLoggedIn: true,
+                userName: action.userName
             }
         case "LOGIN_FORM_CLOSE":
             return {
@@ -148,10 +160,15 @@ const reducer = (state = {}, action) => {
                     data: state.friends.data
                 }
             }
+        case "SET_ELEMENTO":
+            return {
+                ...state,
+                elemento: action.elemento
+            }
+
 
         default: return state;
     }
-
 };
 
 export default reducer;

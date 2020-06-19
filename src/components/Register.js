@@ -188,7 +188,7 @@ function Register(props) {
                                 onRegisterUserSubmit(e);
                                 props.registerFormClose();
                                 if (!props.isLoggedIn) props.loginFormOpen();
-                            } else props.messageOpen('Error en las entradas...', 'error')
+                            } else props.messageOpen('Invalid entries...', 'error')
                         }
                         } color="primary" autoFocus>
                             Register

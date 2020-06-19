@@ -25,6 +25,9 @@ import Fab from '@material-ui/core/Fab';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Zoom from '@material-ui/core/Zoom';
 
+import Login from './Login';
+import Register from './Register';
+
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { connect } from "react-redux";
 
@@ -154,7 +157,13 @@ function LeftMenu(props) {
 
     return (
         <div className={classes.root}>
+            <div>
+                {/*< LoggedStatus />para manejar que formulario de registro o de login renderizo*/}
+                {!props.isLoggedIn && <Login />}
+                {(!props.isLoggedIn && props.register) && <Register />}
 
+
+            </div>
             <Router>
 
                 <CssBaseline />
