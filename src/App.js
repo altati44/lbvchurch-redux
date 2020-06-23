@@ -165,9 +165,7 @@ function App(props) {
         setOpen(false);
     };
 
-
-
-    //..............
+    //..............Right Menu and popup, log out, etc.
     const UserMenu = () => {
         //menu para user
         //const [auth, setAuth] = React.useState(true);
@@ -175,20 +173,14 @@ function App(props) {
         const abre = Boolean(anchorEl);
 
         const handleMenu = (event) => {
+            //let sss = Object.assign(event.currentTarget);
             setAnchorEl(event.currentTarget);
-
-            //let a = new Object(event.currentTarget);
-            //console.log(anchorEl)
-            //props.setElemento('"' + event.currentTarget + '"')
-            //console.log(props.elemento)
-
+            //,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+            //console.log([], Object.assign(props.data))
         };
 
         const handleClose = () => {
             setAnchorEl(null);
-
-            props.setElemento(null);
-
         };
         return (
             <React.Fragment>
@@ -208,7 +200,6 @@ function App(props) {
                                 onClick={(event) => { handleMenu(event) }}
                                 color="inherit"
                             >
-
                                 <AccountCircle />
                             </IconButton>
                         </Grid>
@@ -238,18 +229,14 @@ function App(props) {
             </React.Fragment>
         )
     }
-
     return (
         <div className={classes.root}>
             <div>
                 {/*< LoggedStatus />para manejar que formulario de registro o de login renderizo*/}
                 {!props.isLoggedIn && <Login />}
                 {(!props.isLoggedIn && props.register) && <Register />}
-
-
             </div>
             <Router>
-
                 <CssBaseline />
                 <AppBar
                     position="fixed"
@@ -354,7 +341,8 @@ const mapStateToProps = state => ({
     showRegister: state.showRegister,
     isLoggedIn: state.isLoggedIn,
     messageBoxData: state.messageBoxData,
-    elemento: state.elemento
+    data: state.friends.data,
+    rowsCount: state.rowsCount
 });
 
 //actualiza la forma como saldra el mensaje
@@ -396,6 +384,12 @@ const mapDispatchToProps = dispatch => ({
         dispatch({
             type: "SET_ELEMENTO",
             elemento
+        })
+    },
+    setElemento(rowsCount) {
+        dispatch({
+            type: "SET_ROWS_COUNT",
+            rowsCount
         })
     },
 

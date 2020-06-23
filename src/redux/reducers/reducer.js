@@ -156,14 +156,18 @@ const reducer = (state = {}, action) => {
                 ...state,
                 friends: {
                     ...state.friends,
-                    data: state.friends.data[action.index] = action.data,
-                    data: state.friends.data
+                    data: state.data[action.index] = action.data
                 }
             }
         case "SET_ELEMENTO":
             return {
                 ...state,
                 elemento: action.elemento
+            }
+        case "SET_ROW_COUNT":
+            return {
+                ...state,
+                rowsCount: action.rowsCount
             }
 
 

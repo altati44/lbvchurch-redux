@@ -73,7 +73,8 @@ function Login(props) {
                     props.loggedIn(res.data.user.name);
                     props.loginFormClose();
                     console.log('EJECUTANDO...loginFormCLose');
-
+                    //let sss = Object.assign({}, props.elemento);
+                    //console.log(sss);
 
                 } else {
                     props.messageOpen(res.data.data, 'error')
@@ -190,7 +191,8 @@ const mapStateToProps = state => ({
     email: state.email,
     passwordVisible: state.passwordVisible,
     emailValid: state.emailValid,
-    passwordValid: state.passwordValid
+    passwordValid: state.passwordValid,
+    elemento: state.elemento
 });
 
 //actualiza la forma como saldra el mensaje

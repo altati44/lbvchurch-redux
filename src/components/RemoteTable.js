@@ -77,7 +77,7 @@ const theme = createMuiTheme({
 });
 
 function RemoteTable(props) {
-    const [entries, setEntries] = useState({
+    /*const [entries, setEntries] = useState({
         data: [
             {
                 friend_id: "",
@@ -86,17 +86,17 @@ function RemoteTable(props) {
                 lastname: ""
             }
         ]
-    });
+    });*/
 
-    const [state] = React.useState({
+    /*const [state] = React.useState({
         columns: [
             { title: "First Name", field: "firstname" },
             { title: "Middle Name", field: "middlename" },
             { title: "Last Name", field: "lastname" }
         ]
-    });
+    });*/
 
-    const [selectedRow, setSelectedRow] = useState(null);
+    //const [selectedRow, setSelectedRow] = useState(null);
     //muestra los datos de la tabla friends cuando el componente es renderizado
     useEffect(() => {
         axios
@@ -105,8 +105,7 @@ function RemoteTable(props) {
 
                 let data = [];
                 props.setFriendsData(res.data.result);
-
-                res.data.result.forEach(record => {
+                /*res.data.result.forEach(record => {
                     data.push({
                         friend_id: record.friend_id,
                         firstname: record.firstname,
@@ -116,10 +115,9 @@ function RemoteTable(props) {
                     //console.log(data)
                 });
                 //console.log(data);
-                setEntries({ data: data });
+                setEntries({ data: data });*/
                 //props.setDatos(data);
-                console.log('entries.data completado')
-                console.log(data.length);
+
 
             })
             .catch(function (error) {
@@ -128,20 +126,14 @@ function RemoteTable(props) {
         //console.log(props.data.length)
     }, []);//[] para renderizar solo una vez
 
-
-
     return (
-
         <MuiThemeProvider theme={theme}>
-
             <MaterialTable
-                title="Friends list..."
+                //title={[props.rowsCount, ' total(s) rows.']}
                 icons={tableIcons}
                 columns={props.columns}
-                data={entries.data}
+                data={props.data}
                 // other props
-
-
                 localization={{
                     pagination: {
                         labelDisplayedRows: '{from}-{to} of {count}'
@@ -184,9 +176,9 @@ function RemoteTable(props) {
                     search: true,
                     selection: true,
                     toolbar: true,
-                    showTitle: false,
+                    //showTitle: true,
                     headerStyle: { padding: '4px 8px 4px 8px' },
-                    pageSizeOptions: [5, 10, 20, 30, entries.data.length],
+                    pageSizeOptions: [5, 10, 20, 30],
                     //paginationType: 'stepped',
                     exportButton: true,
                     printButton: true,
@@ -202,7 +194,6 @@ function RemoteTable(props) {
                     })
                 }}
                 editable={{
-
                     /**La parte que dice para redux es para guaradr y actualizar la informacion de la 
                      * tabla en data de la store, lo tengo comentado porque para que me funcione tengo
                      * que llamar despues de updateFriendsData a setFriendsData para que los cambios 
@@ -212,39 +203,28 @@ function RemoteTable(props) {
                         new Promise(resolve => {
                             setTimeout(() => {
                                 resolve();
-                                //para redux
-                                //const data = props.data;
-
-                                //para state
-                                const data = [...entries.data];
-
+                                //console.log(oldData)
+                                const data = [...props.data];
                                 const index = data.indexOf(oldData);
                                 data[index] = newData;
                                 const fields = Object.assign({}, newData);
                                 delete fields.tableData; //tableData de material-table, un campo con informacion
                                 delete fields.friend_id; //borro pq no lo necesito y es autoincrementable y clave primaria
-                                delete fields.created_at;//ignoro created_at
+                                delete fields.created_at;//ignoro created_at para que no me de errores...
                                 axios
                                     .put("http://localhost:5000/api/friends/" + oldData.friend_id, fields)
                                     .then(res => {
                                         //para redux                                    
-                                        //props.updateFriendsData(newData, index);
-                                        //props.setFriendsData(data);
-                                        //para state
-                                        setEntries({ ...entries, data });
-
-                                        console.log('entries.data')
-                                        console.log(entries.data);
+                                        props.setFriendsData(data);
                                         props.messageOpen(res.data.message, 'success');
                                     });
-
                             }, 600);
                         }),
                     onRowDelete: oldData =>
                         new Promise(resolve => {
                             setTimeout(() => {
                                 resolve();
-                                const data = [...entries.data];
+                                const data = [...props.data];
                                 //data.splice(data.indexOf(oldData), 1);
                                 //console.log(oldData.friend_id);
                                 axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxMDgsIm5hbWUiOiJubm5uIiwiZW1haWwiOiJubm5uQGdtYWlsLmNvbSJ9LCJpYXQiOjE1OTEyMzExMDksImV4cCI6MTU5MTMxNzUwOX0.y-Rwt5eyuHCJ-rdHRxJZvXBEdB3C4rw6ZJmEIjFB5sI';
@@ -254,39 +234,26 @@ function RemoteTable(props) {
                                         if (res.data.success == 1) {
                                             //console.log(res.data.success)
                                             data.splice(data.indexOf(oldData), 1);
-                                            setEntries({ ...entries, data });
                                             props.setFriendsData(data);
-                                            console.log(entries.data);
                                             props.messageOpen(res.data.message, 'success');
                                         }
                                     });
-
-
                             }, 600);
                         }),
                     onRowAdd: (newData) =>
                         new Promise((resolve) => {
                             setTimeout(() => {
                                 resolve();
-                                const data = [...entries.data];
-                                //console.log(newData);
+                                const data = [...props.data];
                                 axios.defaults.headers.common['Authorization'] = `Bearer ${props.token}`;
                                 axios
                                     .post('http://localhost:5000/api/friends/', newData)
                                     .then((res) => {
                                         if (res.data.success != 0) {
-                                            const fields = Object.assign({}, newData);
-                                            const ii = newData["tableData"]
-                                            //.forEach(element => console.log(element));
-                                            //console.log(tableData.id);
-                                            //const fields = Object.assign({}, newData);
-                                            console.log(newData)
+                                            newData = { "friend_id": res.data.id, ...newData }
                                             data.push(newData);
-                                            const index = data.indexOf(newData);
-                                            const newField = { "friend_id": res.data.id }
-                                            data[index] = { "friend_id": res.data.id, ...data[index] };
-                                            //const resData = [...data, data.push(newData)];                                        
-                                            setEntries({ ...entries, data });
+                                            console.log('added', newData)
+                                            props.setFriendsData(data);
                                             props.messageOpen(res.data.message, 'success');
                                         } else props.messageOpen(res.data.message, 'error');
                                     });
@@ -295,15 +262,14 @@ function RemoteTable(props) {
                 }}
             />
         </MuiThemeProvider>
-
-
     );
 }
 
 const mapStateToProps = state => ({
     columns: state.columns,
     token: state.token,
-    data: state.friends.data
+    data: state.friends.data,
+    rowsCount: state.rowsCount
 });
 
 //actualiza la forma como saldra el mensaje
@@ -321,12 +287,19 @@ const mapDispatchToProps = dispatch => ({
             data
         })
     },
-    updateFriendsData(data) {
+    updateFriendsData(newData, index) {
         dispatch({
             type: "UPDATE_FRIENDS_DATA",
-            data
+            newData,
+            index
         })
-    }
+    },
+    setElemento(rowsCount) {
+        dispatch({
+            type: "SET_ROWS_COUNT",
+            rowsCount
+        })
+    },
 
 });
 
