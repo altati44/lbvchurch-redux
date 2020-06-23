@@ -70,7 +70,6 @@ const theme = createMuiTheme({
         },
         //fontSize: "18",
     }
-
 });
 
 function RemoteTable(props) {
@@ -84,7 +83,6 @@ function RemoteTable(props) {
             .catch(function (error) {
                 console.log(error);
             });
-        //console.log(props.data.length)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);//[] para renderizar solo una vez
 
