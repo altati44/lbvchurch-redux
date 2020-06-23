@@ -19,7 +19,6 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import RemoteTable from './RemoteTable';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Fab from '@material-ui/core/Fab';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -28,7 +27,7 @@ import Zoom from '@material-ui/core/Zoom';
 import Login from './Login';
 import Register from './Register';
 
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, /*Route*/ } from 'react-router-dom';
 import { connect } from "react-redux";
 
 const drawerWidth = 240;

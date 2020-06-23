@@ -19,7 +19,6 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import RemoteTable from './components/RemoteTable';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Fab from '@material-ui/core/Fab';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -31,7 +30,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import Login from './components/Login';
 import Register from './components/Register';
 
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, /*Route*/ } from 'react-router-dom';
 import { connect } from "react-redux";
 import { Grid } from '@material-ui/core';
 import MessageBox from './components/MessageBox';
@@ -378,12 +377,6 @@ const mapDispatchToProps = dispatch => ({
         dispatch({
             type: "SET_FRIENDS_DATA",
             data
-        })
-    },
-    setElemento(elemento) {
-        dispatch({
-            type: "SET_ELEMENTO",
-            elemento
         })
     },
     setElemento(rowsCount) {

@@ -24,8 +24,6 @@ import IconButton from '@material-ui/core/IconButton';
 
 
 import { connect } from "react-redux";
-
-import MessageBox from './MessageBox';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -48,12 +46,12 @@ function Register(props) {
 
     const classes = useStyles();
 
-
-    function handleSubmit(event) {
-        alert('A name was submitted: ' + event.target.value);
-        event.preventDefault();
-    };
-
+    /*
+        function handleSubmit(event) {
+            alert('A name was submitted: ' + event.target.value);
+            event.preventDefault();
+        };
+    */
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
