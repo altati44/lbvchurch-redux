@@ -68,10 +68,7 @@ const theme = createMuiTheme({
             light: '#448aff',
             dark: '#37b159',
         },
-
         //fontSize: "18",
-
-
     }
 
 });
