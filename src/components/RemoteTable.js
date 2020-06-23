@@ -123,14 +123,10 @@ function RemoteTable(props) {
                             deleteText: 'SURE? {count}'
                         }
                     }
-                }}
+                }}/*
                 components={{
-                    Action: {
-                        tooltip: 'Remove All Selected Rows',
-                        icon: tableIcons.Delete,
-                        onClick: (evt, data) => console.log(data)
-                    }
-                }}
+                    Action: props => <Button onClick={() => props.onClick()}>My Button</Button>
+                }}*/
                 actions={[
                     {
                         tooltip: 'Remove All Selected Rows',
