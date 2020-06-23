@@ -10,7 +10,7 @@ import { connect } from "react-redux";
 
 //import Paper from '@material-ui/core/Paper';
 //import Box from '@material-ui/core/Box';
-//import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button';
 
 import React, { useEffect } from "react";
 import axios from "axios";
@@ -91,6 +91,11 @@ function RemoteTable(props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);//[] para renderizar solo una vez
 
+    function rowClickHanddle(evt, rowData) {
+        //rowData.tableData.checked;
+        console.log(rowData);
+    }
+
     return (
         <MuiThemeProvider theme={theme}>
             <MaterialTable
@@ -113,12 +118,19 @@ function RemoteTable(props) {
                         emptyDataSourceMessage: 'No records to display',
                         filterRow: {
                             filterTooltip: 'Filter'
+                        },
+                        editRow: {
+                            deleteText: 'SURE? {count}'
                         }
                     }
-                }}/*
-                            components={{
-                                Action: props => <Button onClick={() => props.onClick()}>My Button</Button>
-                            }}*/
+                }}
+                components={{
+                    Action: {
+                        tooltip: 'Remove All Selected Rows',
+                        icon: tableIcons.Delete,
+                        onClick: (evt, data) => console.log(data)
+                    }
+                }}
                 actions={[
                     {
                         tooltip: 'Remove All Selected Rows',
@@ -130,17 +142,15 @@ function RemoteTable(props) {
                         icon: tableIcons.Export,
                         onClick: (evt, data) => console.log(data)
                     }
-
                 ]}
                 onRowClick={((evt, rowData) =>
-                    //setSelectedRow(selectedRow.tableData.id)
-                    rowData.tableData.checked
+                    rowClickHanddle(evt, rowData)
                 )}
                 options={{
                     search: true,
                     selection: true,
                     toolbar: true,
-                    //showTitle: true,
+                    showTitle: false,
                     pageSizeOptions: [5, 10, 20, 30],
                     //paginationType: 'stepped',
                     exportButton: true,
@@ -150,7 +160,7 @@ function RemoteTable(props) {
                         color: '#7986cb',
                         backgroundColor: '#ffe0b2',
                         hoverColor: 'white',
-                        padding: '4px 8px 4px 8px'
+                        //padding: '4px 8px 4px 8px'
                     },
                     rowStyle: rowData => ({
                         //backgroundColor: (selectedRow === rowData.tableData.id) ? '#e3f2fd' : '#FFF'
