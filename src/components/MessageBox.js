@@ -6,6 +6,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux'
 import SnackbarContent from '@material-ui/core/SnackbarContent'
 import { makeStyles } from '@material-ui/core/styles';
+//import { SnackbarProvider } from 'notistack';
+//import DoneAllIcon from '@material-ui/icons/DoneAll';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -18,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 const MessageBox = (props) => {
     const classes = useStyles();
+
     return (
         <div className={classes.root}>
             <Snackbar
@@ -37,7 +40,12 @@ const MessageBox = (props) => {
 
                 }}
 
-                    message={props.messageBoxData.message}
+                    message={
+                        <React.Fragment>
+                            {/*<DoneAllIcon />*/}
+                            {props.messageBoxData.message}
+                        </React.Fragment>
+                    }
                     action={
                         <React.Fragment>
                             <IconButton size="small" aria-label="close" color="inherit"
@@ -46,7 +54,9 @@ const MessageBox = (props) => {
                             </IconButton>
                         </React.Fragment>
                     }
-                />
+                >
+
+                </SnackbarContent>
             </Snackbar>
         </div >
     )

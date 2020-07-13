@@ -12,15 +12,15 @@ const initialState = {
     showLogin: true,
     register: false,
     showRegister: false,
-    emailValid: false,
-    passwordValid: false,
+    emailValid: true,
+    passwordValid: true,
     //showPassword: false,
     passwordVisible: false,
     tokenExist: false,
     token: '',
     userName: '',
-    email: 'nnnn@gmail.com',
-    password: '12345678',
+    email: 'altati44@gmail.com',
+    password: 'T@tic@44',
     messageBoxData: {
         message: '',
         open: false,
@@ -44,12 +44,20 @@ const initialState = {
         }
     },
     rowsCount: 0,
+    loadProfileData: false,//para cargar la data del user que hace login: menu, modulos, etc.
+    userRows: [],
+    userModules: [],
+    filterOptions: false,
     friends: {},
     columns: [
         { title: "First Name", field: "firstname" },
         { title: "Middle Name", field: "middlename" },
         { title: "Last Name", field: "lastname" }
     ],
+    openDrawer: false,
+    friendSelected: { friend_id: 0 },
+    friendDetails: [],
+    showDetails: false //para mostrar el panel de detalles de friends
 };
 
 export default createStore(

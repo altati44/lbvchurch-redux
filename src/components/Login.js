@@ -9,6 +9,8 @@ import Box from '@material-ui/core/Box';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import 'typeface-roboto';
 
+import { useEffect } from "react";
+
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -50,16 +52,18 @@ axios.post(url, {
 })
 */
 
+
+
 function Login(props) {
 
     const classes = useStyles();
 
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        props.checkEmail(props.email); props.checkPassword(props.password);
-        //console.log(props.emailValid + ':' + props.passwordValid)
         if (props.emailValid && props.passwordValid) {
-            console.log(props.emailValid + ':' + props.passwordValid)
+            //console.log(props.emailValid + ':' + props.passwordValid)
             try {
                 axios.defaults.headers.common['Authorization'] = '';
                 const res = await axios.post('http://localhost:5000/api/signin', {
@@ -68,19 +72,31 @@ function Login(props) {
                 });
                 if (res.data.success === 1) {
                     //console.log(res.data.result[0].user_name)
-                    props.messageOpen(res.data.user.name + ' ' + res.data.message, 'success')
-                    props.updateToken(res.data.token)
-                    props.loggedIn(res.data.user.name);
-                    props.loginFormClose();
-                    console.log('EJECUTANDO...loginFormCLose');
-                    //let sss = Object.assign({}, props.elemento);
-                    //console.log(sss);
+                    props.messageOpen(res.data.user.userName + ' ' + res.data.message, 'success')
+                    props.updateToken(res.data.token);
+                    let rows = res.data.rows;
+                    let arrayModules = [];
+                    //console.log(rows)
+                    rows.forEach(element => {
+                        //console.log(element.module_id)
+                        arrayModules.push([element.module_id, element.module_display_name, element.module_icon, element.module_name, element.module_access])
+                    })
+                    arrayModules.sort((a, b) => a[0] - b[0]);
 
+
+                    //rows.sort();
+                    props.setUserRows(rows);
+                    props.setUserModules(arrayModules);
+                    props.loggedIn(res.data.user);
+                    console.log('user', res.data.user)
+
+                    props.loginFormClose();
+
+                    //console.log('rows modules', arrayModules)
                 } else {
                     props.messageOpen(res.data.data, 'error')
-                    console.log(res.data.data)
+                    //console.log(res.data.data)
                 }
-
             } catch{ props.messageOpen('Connection refused.', 'error') }
         } else props.messageOpen('Invalid entries...', 'error');
     }
@@ -88,6 +104,7 @@ function Login(props) {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
+
 
     return (
         <div>
@@ -186,13 +203,18 @@ function Login(props) {
 const mapStateToProps = state => ({
     register: state.register,
     showRegister: state.showRegister,
-    showLogin: state.showLogin,///////////////////repetido aqui
+    showLogin: state.showLogin,///////////////////repetido aqui,
+    token: state.token,
     password: state.password,
     email: state.email,
     passwordVisible: state.passwordVisible,
     emailValid: state.emailValid,
     passwordValid: state.passwordValid,
-    elemento: state.elemento
+    elemento: state.elemento,
+    userRows: state.userRows,
+    user: state.user,
+    userModules: state.userModules
+
 });
 
 //actualiza la forma como saldra el mensaje
@@ -204,10 +226,10 @@ const mapDispatchToProps = dispatch => ({
             smsType
         })
     },
-    loggedIn(userName) {
+    loggedIn(user) {
         dispatch({
             type: "LOGGED_IN",
-            userName
+            user
         })
     },
     loginFormClose() {
@@ -260,6 +282,19 @@ const mapDispatchToProps = dispatch => ({
             password
         })
     },
+    setUserRows(userRows) {
+        dispatch({
+            type: "SET_USER_ROWS",
+            userRows
+        })
+    },
+    setUserModules(rows) {
+        dispatch({
+            type: "SET_USER_MODULES",
+            userModules: rows
+        })
+    },
+
 });
 
 

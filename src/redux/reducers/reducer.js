@@ -22,6 +22,7 @@ const reducer = (state = {}, action) => {
                 mostrar: true
             }
         case "LOGN_IN":
+            console.log('Arreglar esto....................LOG_IN........................')
             return {
                 ...state,
                 login: !state.login,
@@ -37,20 +38,21 @@ const reducer = (state = {}, action) => {
                 isLoggedIn: false,
                 showLogin: true,
                 tokenExist: false,
-                token: ''
+                token: '',
+                emailValid: false,
+                passwordValid: false
             }
         case 'CHECK_EMAIL':
             //const validEmailRegExp = RegExp(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i);
-
             return {
                 ...state,
-                emailValid: state.validEmailRegExp.test(action.email)
+                //emailValid: state.emailValid = state.validEmailRegExp.test(action.email)
             }
         case 'CHECK_PASSWORD':
             console.log(action.password.length + '>>>pasa')
             return {
                 ...state,
-                passwordValid: action.password.length >= 6
+                //passwordValid: action.password.length >= 6
             }
         case "MESSAGE_CLOSE":
             return {
@@ -74,7 +76,8 @@ const reducer = (state = {}, action) => {
             return {
                 ...state,
                 isLoggedIn: true,
-                userName: action.userName
+                user: action.user,
+                loadProfileData: true
             }
         case "LOGIN_FORM_CLOSE":
             return {
@@ -128,12 +131,14 @@ const reducer = (state = {}, action) => {
         case "UPDATE_EMAIL":
             return {
                 ...state,
-                email: action.email
+                email: action.email,
+                emailValid: state.emailValid = state.validEmailRegExp.test(action.email)
             }
         case "UPDATE_PASSWORD":
             return {
                 ...state,
-                password: action.password
+                password: action.password,
+                passwordValid: action.password.length >= 6
             }
         case "UPDATE_TOKEN":
             return {
@@ -168,6 +173,46 @@ const reducer = (state = {}, action) => {
             return {
                 ...state,
                 rowsCount: action.rowsCount
+            }
+        case "SET_OPEN_DRAWER":
+            return {
+                ...state,
+                openDrawer: action.openDrawer
+            }
+        case "SET_USER_ROWS":
+            return {
+                ...state,
+                userRows: action.userRows
+            }
+        case "SET_USER_MODULES":
+            return {
+                ...state,
+                userModules: action.userModules
+            }
+        case "SET_PROFILE_DATA":
+            return {
+                ...state,
+                loadProfileData: action.loadProfileData
+            }
+        case "SET_FILTER_OPTIONS":
+            return {
+                ...state,
+                filterOptions: !state.filterOptions
+            }
+        case "SET_FRIEND_SELECTED":
+            return {
+                ...state,
+                friendSelected: action.friendSelected
+            }
+        case "SET_FRIEND_DETAILS":
+            return {
+                ...state,
+                friendDetails: action.friendDetails
+            }
+        case "SET_SHOW_DETAILS":
+            return {
+                ...state,
+                showDetails: !state.showDetails
             }
 
 

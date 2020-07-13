@@ -18,6 +18,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import RemoteTable from './components/RemoteTable';
+import TableTest from './components/TableTest';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import Container from '@material-ui/core/Container';
 import Fab from '@material-ui/core/Fab';
@@ -27,10 +28,27 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
+import ListIcon from '@material-ui/icons/List';
+
 import Login from './components/Login';
 import Register from './components/Register';
 
-import { BrowserRouter as Router, /*Route*/ } from 'react-router-dom';
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import renderHTML from 'react-render-html';
+import InnerHTML from 'dangerously-set-html-content';
+import ReactHTMLConverter from 'react-html-converter/node';
+import Interweave from 'interweave';
+import dangerouslySetInnerHTML from 'dangerously-set-inner-html';
+import Parser from 'html-react-parser';
+import Icon from '@material-ui/core/Icon';
+import { Ballot, PeopleAlt, Build, ViewModule } from '@material-ui/icons';
+
+
+
+import { useEffect } from "react";
+
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from "react-redux";
 import { Grid } from '@material-ui/core';
 import MessageBox from './components/MessageBox';
@@ -57,15 +75,15 @@ const useStyles = makeStyles((theme) => ({
         //minHeight: 128,
         //alignItems: 'flex-start',
         //paddingTop: theme.spacing(1),
-        //paddingBottom: theme.spacing(2),
-        backgroundColor: '#2196f3',
+        //paddingBottom: theme.spacing(2),2196f3
+        backgroundColor: '#4939d4',
     },
     toolbar2: {
         //minHeight: 128,
         //alignItems: 'flex-start',
         //paddingTop: theme.spacing(1),
         //paddingBottom: theme.spacing(2),
-        //backgroundColor: '#2196f3',
+        //backgroundColor: '#4939d4',
     },
     appBar: {
         transition: theme.transitions.create(['margin', 'width'], {
@@ -154,22 +172,20 @@ function ScrollTop(props) {
 function App(props) {
     const classes = useStyles();
     const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
 
     const handleDrawerOpen = () => {
-        setOpen(true);
+        props.setOpenDrawer(true);
     };
 
     const handleDrawerClose = () => {
-        setOpen(false);
+        props.setOpenDrawer(false);
     };
 
-    //..............Right Menu and popup, log out, etc.
+    //..............Right Menu and popup, log out, etc. no puedo ponerlo en redux por el anchorEl que es muy largo...
     const UserMenu = () => {
         //menu para user
-        //const [auth, setAuth] = React.useState(true);
         const [anchorEl, setAnchorEl] = React.useState(null);
-        const abre = Boolean(anchorEl);
+        const openMenu = Boolean(anchorEl);
 
         const handleMenu = (event) => {
             //let sss = Object.assign(event.currentTarget);
@@ -181,13 +197,14 @@ function App(props) {
         const handleClose = () => {
             setAnchorEl(null);
         };
+
         return (
             <React.Fragment>
                 <div>
                     <Grid container spacing={1} style={{ alignItems: 'center' }}>
                         <Grid item xs={10} style={{ align: 'right' }} >
                             <Typography noWrap align='right' style={{ color: 'rgb(238, 229, 214)' }}>
-                                Welcome {props.userName}!
+                                Welcome {props.user.userName}!
                         </Typography>
                         </Grid>
                         <Grid item xs={2} >
@@ -218,7 +235,7 @@ function App(props) {
                             vertical: 'top',
                             horizontal: 'right',
                         }}
-                        open={abre}
+                        open={openMenu}
                         onClose={handleClose}
                     >
                         <MenuItem onClick={null}>Profile</MenuItem>
@@ -228,19 +245,73 @@ function App(props) {
             </React.Fragment>
         )
     }
+    let cargaProfile = props.loadProfileData;//para hacer el juego de cargarlo solo una vez y no cada vez que....
+    //Lo uso para renderizar cada vez que se cargue el profile del usuario logeado
+    useEffect(() => {
+        {/*Cargo los datos del usuario: menu, modulos, etc.*/ }
+        if (cargaProfile) {
+            props.setProfileData(false);
+            console.log('desde APP:  ', props.userModules)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.loadProfileData]);//[] para renderizar solo cuando cambie loadProfileData
+
+    //poner en la store ...PENDIENTE
+    const [selectedIndex, setSelectedIndex] = React.useState(null);
+
+    const handleListItemClick = (event, index) => {
+        setSelectedIndex(index);
+        console.log(event.target.tagName.value, index)
+    };
+
+    let arrayModules = [];
+    let arrayModulesSort = [];
+    function htmlToElement(html) {
+        var template = document.createElement('template');
+        html = html.trim(); // Never return a text node of whitespace as the result
+        template.innerHTML = html;
+        return template.content.firstChild;
+    }
+
+    var td = htmlToElement('<ListIcon/>')
+    const html = `<ListIcon/>`;
+    //const converter = new ReactHTMLConverter();
+    const someHtml = '<div><strong>blablabla<strong><p>another blbla</p/></div>';
+
+
+    //para poner icono al menu desplegable de la izquierda
+    const IconFunction = (icon) => {
+        switch (icon) {
+            case 'ListIcon':
+                return <ListIcon />
+            case 'Ballot':
+                return <Ballot />
+            case 'PeopleAlt':
+                return <PeopleAlt />
+            case 'Build':
+                return <Build />
+            case 'ViewModule':
+                return <ViewModule />
+            default: return null
+        }
+    }
+
+    //DEL.........PRINCIPAL...................... APP
     return (
         <div className={classes.root}>
             <div>
                 {/*< LoggedStatus />para manejar que formulario de registro o de login renderizo*/}
                 {!props.isLoggedIn && <Login />}
                 {(!props.isLoggedIn && props.register) && <Register />}
+
             </div>
             <Router>
                 <CssBaseline />
                 <AppBar
                     position="fixed"
                     className={clsx(classes.appBar, {
-                        [classes.appBarShift]: open,
+                        [classes.appBarShift]: props.openDrawer,
                     })}
                 >
                     <Toolbar className={classes.toolbar} >
@@ -249,7 +320,7 @@ function App(props) {
                             aria-label="open drawer"
                             onClick={handleDrawerOpen}
                             edge="start"
-                            className={clsx(classes.menuButton, open && classes.hide)}
+                            className={clsx(classes.menuButton, props.openDrawer && classes.hide)}
                         >
                             <MenuIcon />
                         </IconButton>
@@ -260,6 +331,7 @@ function App(props) {
                         {props.isLoggedIn && (<UserMenu />
 
                         )}
+
                     </Toolbar>
                 </AppBar>
 
@@ -267,7 +339,7 @@ function App(props) {
                     className={classes.drawer}
                     variant="persistent"
                     anchor="left"
-                    open={open}
+                    open={props.openDrawer}
                     classes={{
                         paper: classes.drawerPaper,
                     }}
@@ -279,14 +351,25 @@ function App(props) {
                     </div>
                     <Divider />
                     <List>
-                        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                            <ListItem button key={text}>
-                                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
+
+
+
+
+                        {/*//aparecen los Link*/}
+                        {props.userModules.map((text, index) => (
+                            <Link to={text[3]} key={text[0]} style={{ textDecoration: 'none', color: 'black' }} >
+                                <ListItem
+                                    button key={text[0]}
+                                    selected={selectedIndex === text[0]}
+                                    onClick={(event) => handleListItemClick(event, text[0])}
+                                >
+                                    <ListItemIcon >{IconFunction(text[2])}</ListItemIcon>
+                                    <ListItemText primary={text[1]} />
+                                </ListItem>
+                            </Link>
                         ))}
                     </List>
-                    <Divider />
+                    {/*<Divider />
                     <List>
                         {['All mail', 'Trash', 'Spam'].map((text, index) => (
                             <ListItem button key={text}>
@@ -294,12 +377,12 @@ function App(props) {
                                 <ListItemText primary={text} />
                             </ListItem>
                         ))}
-                    </List>
+                    </List>*/}
                 </Drawer>
                 <React.Fragment>
                     <main
                         className={clsx(classes.content, {
-                            [classes.contentShift]: open,
+                            [classes.contentShift]: props.openDrawer,
                         })}
                     >
                         <Toolbar className={classes.toolbar2} id="main-bar" />{/**solo para regresar el scroll */}
@@ -312,10 +395,18 @@ function App(props) {
                                     type_message={props.messageBoxData.smsType}
                                 />
                             </div>
-                            {/**Dentro va todo el contenido de la Alicacion */}
+                            {/**Dentro va todo el contenido de la Aplicacion */}
 
+                            {/*
+        <Route exact path="/" component={FriendsList} />
+        <Route exact path="/create" component={CreateFriend} >
+          <Route exact path="/create" component={FriendsList} />
+        </Route>
 
-                            <RemoteTable />
+        */}
+
+                            <Route path="/friends" component={RemoteTable} />
+                            <Route path="/usersModules" component={TableTest} />
 
 
                         </Container>
@@ -333,7 +424,7 @@ function App(props) {
 
 const mapStateToProps = state => ({
     mostrar: state.mostrar,
-    userName: state.userName,
+    user: state.user,
     login: state.login,
     register: state.register,
     showLogin: state.showLogin,
@@ -341,7 +432,12 @@ const mapStateToProps = state => ({
     isLoggedIn: state.isLoggedIn,
     messageBoxData: state.messageBoxData,
     data: state.friends.data,
-    rowsCount: state.rowsCount
+    rowsCount: state.rowsCount,
+    openDrawer: state.openDrawer,
+    userRows: state.userRows,
+    tokenExist: state.tokenExist,
+    loadProfileData: state.loadProfileData,
+    userModules: state.userModules
 });
 
 //actualiza la forma como saldra el mensaje
@@ -385,7 +481,18 @@ const mapDispatchToProps = dispatch => ({
             rowsCount
         })
     },
-
+    setOpenDrawer(openDrawer) {
+        dispatch({
+            type: "SET_OPEN_DRAWER",
+            openDrawer
+        })
+    },
+    setProfileData(loadProfileData) {
+        dispatch({
+            type: "SET_PROFILE_DATA",
+            loadProfileData
+        })
+    }
 });
 
 
