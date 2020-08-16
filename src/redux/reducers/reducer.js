@@ -154,7 +154,8 @@ const reducer = (state = {}, action) => {
                 friends: {
                     ...state.friends,
                     data: action.data
-                }
+                },
+                rowsCount: action.data.length
             }
         case "UPDATE_FRIENDS_DATA":
             return {
@@ -214,7 +215,31 @@ const reducer = (state = {}, action) => {
                 ...state,
                 showDetails: !state.showDetails
             }
-
+        case "SET_SELECTED_ROW":
+            return {
+                ...state,
+                selectedRow: action.selectedRow
+            }
+        case "SET_FRIEND_DATE_SELECTED":
+            return {
+                ...state,
+                friendDateSelected: action.friendDateSelected
+            }
+        case "SET_CURSOR_POSITION":
+            return {
+                ...state,
+                cursorPosition: action.cursorPosition
+            }
+        case "SET_ANCHOR_REF":
+            return {
+                ...state,
+                anchorRef: action.anchorRef
+            }
+        case "SET_REFERENCIA":
+            return {
+                ...state,
+                referencia: action.referencia
+            }
 
         default: return state;
     }

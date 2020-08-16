@@ -76,7 +76,7 @@ function Login(props) {
                     props.updateToken(res.data.token);
                     let rows = res.data.rows;
                     let arrayModules = [];
-                    //console.log(rows)
+                    console.log('CANTIDAD DE ROWS:::::::', rows.length)
                     rows.forEach(element => {
                         //console.log(element.module_id)
                         arrayModules.push([element.module_id, element.module_display_name, element.module_icon, element.module_name, element.module_access])

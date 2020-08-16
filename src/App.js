@@ -300,12 +300,12 @@ function App(props) {
     //DEL.........PRINCIPAL...................... APP
     return (
         <div className={classes.root}>
-            <div>
-                {/*< LoggedStatus />para manejar que formulario de registro o de login renderizo*/}
-                {!props.isLoggedIn && <Login />}
-                {(!props.isLoggedIn && props.register) && <Register />}
 
-            </div>
+            {/*< LoggedStatus />para manejar que formulario de registro o de login renderizo*/}
+            {!props.isLoggedIn && <Login />}
+            {(!props.isLoggedIn && props.register) && <Register />}
+
+
             <Router>
                 <CssBaseline />
                 <AppBar

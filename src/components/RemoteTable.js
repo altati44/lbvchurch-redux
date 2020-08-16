@@ -9,6 +9,7 @@ import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import { ArrowForwardIosIcon, Ballot } from '@material-ui/icons';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import Tooltip from '@material-ui/core/Tooltip';
+import { TablePagination } from '@material-ui/core';
 
 import { forwardRef } from 'react';
 import { connect } from "react-redux";
@@ -18,6 +19,9 @@ import { connect } from "react-redux";
 //import Paper from '@material-ui/core/Paper';
 //import Box from '@material-ui/core/Box';
 //import Button from '@material-ui/core/Button';
+
+import ModalFriend from './ModalFriend';
+import useModalFriend from './useModalFriend';
 
 import React, { useEffect } from "react";
 import axios from "axios";
@@ -41,6 +45,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import PanelView from './PanelView'
 
 //import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
@@ -87,6 +92,9 @@ const theme = createMuiTheme({
 });
 
 function RemoteTable(props) {
+
+    const { isShowing, toggle } = useModalFriend();//para el ModalFriend
+
     //muestra los datos de la tabla friends cuando el componente es renderizado
     useEffect(() => {
         axios
@@ -94,7 +102,8 @@ function RemoteTable(props) {
             .then(res => {
                 props.setFriendsData(res.data.result);
                 props.setFriendSelected(res.data.result[0]);
-                console.log(res.data.result);
+                //console.log('rowsCount<<<<<<<<<', res.data.result.length);
+
             })
             .catch(function (error) {
                 console.log(error);
@@ -110,54 +119,69 @@ function RemoteTable(props) {
         try {
             axios.defaults.headers.common['Authorization'] = '';
             const res = await axios.get('http://localhost:5000/api/friends/' + id);
+            console.log('res.data.success', res.data.success)
             if (res.data.success === 1) {
                 //console.log(res.data.result[0].user_name)
                 //props.messageOpen(res.data.user.userName + ' ' + res.data.message, 'success')
                 //props.updateToken(res.data.token);
                 let rows = res.data.rows;
                 let arrayModules = [];
-                console.log('res', res.data.rows)
-                props.setFriendDetails(res.data.rows)
+                //console.log('res', res.data.rows)
+                if (rows.length > 0) {
+                    props.setFriendDetails(rows)
+                    props.setFriendDateSelected(0);
+                } else {
+
+                    props.setFriendDateSelected(null); props.setFriendDetails([])
+                }
                 /*rows.forEach(element => {
                     //console.log(element.module_id)
                     arrayModules.push([element.module_id, element.module_display_name, element.module_icon, element.module_name, element.module_access])
                 })
                 arrayModules.sort((a, b) => a[0] - b[0]);
-
-
-                //rows.sort();
-                //props.setUserRows(rows);
-                //props.setUserModules(arrayModules);
-                //props.loggedIn(res.data.user.userName);
-
-                //props.loginFormClose();
-
-                console.log('rows modules', arrayModules)*/
+*/
+                console.log('DETALLES???', props.friendDetails.length)
             } else {
                 props.messageOpen(res.data.data, 'error')
-                console.log(res.data.data)
+                console.log('NO DATTTTtttta', res.data.data)
             }
         } catch{ props.messageOpen('Connection refused.', 'error') }
     }
 
     async function rowClickHanddle(evt, rowData) {
-        await setSelectedRow(rowData.tableData.id);
+        await props.setSelectedRow(rowData.tableData.id);
         await props.setFriendSelected(rowData);
-        console.log('rowSelected', rowData)
-        loadFriendsSelected(rowData.friend_id)
+        props.setFriendDateSelected(null);
+        console.log('A cargar Datos de DETALLE', rowData);
+        //console.log('A cargar Datos de DETALLE', props.friends.data.length);
+        loadFriendsSelected(rowData.friend_id);
         //console.log(props.friendSelected.firstname + ' ' + props.friendSelected.middlename + ' ' + props.friendSelected.lastname);
     }
 
 
-    const [selectedRow, setSelectedRow] = React.useState(0);
+    //const [selectedRow, setSelectedRow] = React.useState(0);
 
     function visitsClick(evt) {
-        console.log('ADICIONAR UNA VISITA DEL FRIEND....')
+        //console.log('ADICIONAR UNA VISITA DEL FRIEND....', props.friendDetails[1].date)
+
+        return <ModalFriend
+            isShowing={isShowing}
+            hide={toggle}
+        />
+    }
+
+    const [showPanel, setShowPanel] = React.useState(false);
+    function showPanelView(evt) {
+        //const mousePos = getMousePos(evt.currentTarget, evt);
+        var message = 'Mouse position: ' + evt.clientX + ',' + evt.clientY;
+        console.log(message);
+        setShowPanel(!showPanel);
     }
 
     return (
+
         <Grid container spacing={2}>
-            <Grid item xs={props.showDetails ? 8 : 12} >
+            <Grid item xs={props.showDetails ? 9 : 12} >
                 <MuiThemeProvider theme={theme}>
                     {/*<div style={{ padding: '0px 10px', color: '#FFFF', backgroundColor: '#4939d4' }}>
                 {props.friendSelected.firstname + ' ' + props.friendSelected.middlename + ' ' + props.friendSelected.lastname}
@@ -191,52 +215,75 @@ function RemoteTable(props) {
                         components={{
                             //Action: props => <Button onClick={() => props.onClick()}>My Button</Button>...  4939d4
                             Toolbar: propers => (
-                                <div>
-                                    <React.Fragment>
+
+                                <React.Fragment>
 
 
-                                        <Grid container wrap="nowrap" direction="row" justify="flex-end" alignItems="center" spacing={0}
-                                            style={{
-                                                height: '50px', padding: '0px 10px', backgroundColor: '#2196f3',
-                                                alignItems: 'center'
-                                            }}>
-                                            <Grid item xs={11} style={{ align: 'left', color: '#FFFF' }} >
+                                    <Grid container wrap="nowrap" direction="row" justify="flex-end" alignItems="center" spacing={0}
+                                        style={{
+                                            height: '50px', padding: '0px 10px', backgroundColor: '#2196f3',
+                                            alignItems: 'center'
+                                        }}>
+                                        <Grid item xs={11} style={{ align: 'left', color: '#FFFF' }} >
 
-                                                <Typography noWrap align='left' style={{ color: 'rgb(238, 229, 214)' }}>
-                                                    {props.friendSelected.firstname + ' ' + props.friendSelected.middlename + ' ' + props.friendSelected.lastname}
-                                                </Typography>
-                                            </Grid>
-
-
-                                            <Grid item xs={false} >
-                                                <Tooltip title="Visits">
-                                                    <Badge badgeContent={props.friendDetails.length == 0 ? 0 : props.friendDetails.length} color="error"
-                                                        anchorOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'right',
-                                                        }}
-                                                        onClick={(evt) => visitsClick(evt)}
-                                                    >
-                                                        <AccountBalanceIcon style={{ color: '#fafafa' }} />
-                                                    </Badge>
-                                                </Tooltip>
-                                            </Grid>
-                                            <Grid item xs={false} style={{ align: 'right' }}>
-
-                                                <Tooltip title="Show Details">
-                                                    <IconButton onClick={props.setShowDetails}>
-                                                        <Ballot
-                                                            style={{ color: '#fafafa' }}
-
-                                                        />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </Grid>
+                                            <Typography noWrap align='left' style={{ color: 'rgb(238, 229, 214)' }}>
+                                                {props.friendSelected.firstname + ' ' + props.friendSelected.middlename + ' ' + props.friendSelected.lastname}
+                                            </Typography>
                                         </Grid>
-                                        <MTableToolbar {...propers} />
-                                    </React.Fragment>
-                                </div>
+
+                                        <Grid item xs={false} >
+                                            <Tooltip title="Visits">
+                                                <Badge badgeContent={props.friendDetails.length == 0 ? 0 : props.friendDetails.length} color="error"
+                                                    anchorOrigin={{
+                                                        vertical: 'top',
+                                                        horizontal: 'right',
+                                                    }}
+                                                    onClick={(evt) => showPanelView(evt)}//...........................................
+                                                >
+                                                    <AccountBalanceIcon style={{ color: '#fafafa' }} />
+                                                </Badge>
+                                            </Tooltip>
+                                        </Grid>
+                                        <Grid item xs={false} >
+                                            <Tooltip title="Visits">
+                                                <Badge badgeContent={props.friendDetails.length == 0 ? 0 : props.friendDetails.length} color="error"
+                                                    anchorOrigin={{
+                                                        vertical: 'top',
+                                                        horizontal: 'right',
+                                                    }}
+                                                    onClick={(evt) => visitsClick(evt)} //visitsClick(evt)//toogle
+                                                >
+                                                    <AccountBalanceIcon style={{ color: '#fafafa' }} />
+                                                </Badge>
+                                            </Tooltip>
+                                        </Grid>
+                                        <Grid item xs={false} style={{ align: 'right' }}>
+
+                                            <Tooltip title={props.showDetails ? "Hide Details" : "Show Details"}>
+                                                <IconButton onClick={props.setShowDetails}>
+                                                    <Ballot
+                                                        style={{ color: '#fafafa' }}
+
+                                                    />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Grid>
+                                    </Grid>
+                                    <MTableToolbar {...propers} />
+                                </React.Fragment>
+
                             ),
+                            /*Pagination: props => (
+                                <TablePagination
+                                    {...props}
+                                    //rowsPerPageOptions={[5, 10, 20, 30, { label: 'All', value: props.rowsCount }]}
+                                    rowsPerPageOptions={[10, 20, { value: props.rowsCount, label: 'All' }]}
+                                    SelectProps={{
+                                        style: {
+                                            fontSize: 24
+                                        }
+                                    }}
+                                />)*/
                         }}
                         actions={[
                             {
@@ -263,7 +310,8 @@ function RemoteTable(props) {
                             selection: true,
                             //toolbar: true,
                             showTitle: false,
-                            pageSizeOptions: [5, 10, 20, 30],
+                            pageSizeOptions: [5, 10, 20, 30, props.rowsCount],
+                            // pageSizeOptions: [5, 10, 20, 30, { label: 'All', value: props.rowsCount }],//me da error por ser un objeto
                             //paginationType: 'stepped',
                             exportButton: true,
                             printButton: true,
@@ -273,11 +321,16 @@ function RemoteTable(props) {
                                 color: '#7986cb',
                                 backgroundColor: '#ffe0b2',
                                 hoverColor: 'white',
+                                textAlign: 'center'
                                 //padding: '4px 8px 4px 8px'
                             },
                             rowStyle: rowData => ({
-                                backgroundColor: (selectedRow === rowData.tableData.id) ? '#e3f2fd' : ''
-                                //backgroundColor: rowData.tableData.checked ? '#e3f2fd' : '#FFF'
+                                backgroundColor: (props.selectedRow === rowData.tableData.id) ? '#e3f2fd' : '',
+                                //backgroundColor: rowData.tableData.checked ? '#e3f2fd' : '#FFF',
+                                whiteSpace: 'nowrap',//para que no me ponga el texto de la celda en wrap
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                boxSizing: 'borderbox'
                             })
                         }}
                         editable={{
@@ -349,9 +402,15 @@ function RemoteTable(props) {
                     />
                 </MuiThemeProvider>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}> {/**Panel derecho con los detalles del amigo */}
                 {props.showDetails && <CardDetails />}
+                {/**{showPanel && <PanelView />}BORRAR ESTO QUE ES SOLO DE PRUEBA............................................................... */}
             </Grid>
+
+            <ModalFriend
+                isShowing={isShowing}
+                hide={toggle}
+            />
         </Grid>
     );
 
@@ -366,6 +425,7 @@ const mapStateToProps = state => ({
     friendSelected: state.friendSelected,
     friendDetails: state.friendDetails,
     user: state.user,
+    selectedRow: state.selectedRow,
     showDetails: state.showDetails
 });
 
@@ -420,6 +480,18 @@ const mapDispatchToProps = dispatch => ({
             type: "SET_SHOW_DETAILS"
         })
     },
+    setSelectedRow(selectedRow) {
+        dispatch({
+            type: "SET_SELECTED_ROW",
+            selectedRow
+        })
+    },
+    setFriendDateSelected(friendDateSelected) {
+        dispatch({
+            type: "SET_FRIEND_DATE_SELECTED",
+            friendDateSelected
+        })
+    }
 });
 
 

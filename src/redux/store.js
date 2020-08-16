@@ -1,5 +1,16 @@
+import React from 'react';
 import { createStore } from 'redux';
 import allReducers from './reducers/reducer';
+
+function formatPhoneNumber(phoneNumberString) {
+    var cleaned = ('' + phoneNumberString).replace(/\D/g, '')
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
+    if (match) {
+        var intlCode = (match[1] ? '+1 ' : '')
+        return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
+    }
+    return null
+}
 
 const initialState = {
     cart: [],
@@ -51,13 +62,27 @@ const initialState = {
     friends: {},
     columns: [
         { title: "First Name", field: "firstname" },
-        { title: "Middle Name", field: "middlename" },
-        { title: "Last Name", field: "lastname" }
+        { title: "Middle Name", field: "middlename", /*width: "200px"*/ },
+        { title: "Last Name", field: "lastname" },
+        { title: "Address", field: "address" },
+        { title: "Phone", field: "phone", render: rowData => <a href={`tel:${rowData.phone}`} style={{ textDecoration: 'none' }}>{formatPhoneNumber(rowData.phone)}</a> },
+        //<a href="tel:600123456">Contacto: 600123456</a>
+        { title: "Gender", field: "gender", cellStyle: { textAlign: 'center' } },
+        { title: "Email", field: "email" },
+        { title: "Country", field: "from" }
     ],
     openDrawer: false,
+    selectedRow: 0,
     friendSelected: { friend_id: 0 },
+    friendDateSelected: null,
     friendDetails: [],
-    showDetails: false //para mostrar el panel de detalles de friends
+    showDetails: false, //para mostrar el panel de detalles de friends
+    cursorPosition: {
+        posX: 0,
+        posY: 0
+    },
+    anchorRef: false,
+    referencia: "anchorPosition"
 };
 
 export default createStore(
