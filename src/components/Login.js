@@ -66,6 +66,7 @@ function Login(props) {
             //console.log(props.emailValid + ':' + props.passwordValid)
             try {
                 axios.defaults.headers.common['Authorization'] = '';
+                //http://97.104.202.248:5000/api/signin
                 const res = await axios.post('http://localhost:5000/api/signin', {
                     email: props.email,
                     password: props.password
@@ -76,14 +77,14 @@ function Login(props) {
                     props.updateToken(res.data.token);
                     let rows = res.data.rows;
                     let arrayModules = [];
-                    console.log('CANTIDAD DE ROWS:::::::', rows.length)
+                    console.log('CANTIDAD DE ROWS:::::::', rows.length, rows)
                     rows.forEach(element => {
                         //console.log(element.module_id)
-                        arrayModules.push([element.module_id, element.module_display_name, element.module_icon, element.module_name, element.module_access])
+                        arrayModules.push([
+                            element.module_id, element.module_display_name, element.module_icon, element.module_name, element.module_access,
+                        ])
                     })
                     arrayModules.sort((a, b) => a[0] - b[0]);
-
-
                     //rows.sort();
                     props.setUserRows(rows);
                     props.setUserModules(arrayModules);
@@ -97,7 +98,7 @@ function Login(props) {
                     props.messageOpen(res.data.data, 'error')
                     //console.log(res.data.data)
                 }
-            } catch{ props.messageOpen('Connection refused.', 'error') }
+            } catch { props.messageOpen('Connection refused.', 'error') }
         } else props.messageOpen('Invalid entries...', 'error');
     }
 
@@ -107,29 +108,28 @@ function Login(props) {
 
 
     return (
-        <div>
-            <Dialog
-                style={{ top: -500 }}
-                open={props.showLogin}
-                onClose={props.loginFormClose}
-                aria-labelledby="login-dialog-title"
-                aria-describedby="login-dialog-description"
-                disableBackdropClick={true}
-                disableEscapeKeyDown={true}
-            >
+
+        <Dialog
+            //style={{ top: -500 }}
+            open={props.showLogin}
+            onClose={props.loginFormClose}
+            aria-labelledby="login-dialog-title"
+            aria-describedby="login-dialog-description"
+            disableBackdropClick={true}
+            disableEscapeKeyDown={true}
+        >
+            <Grid container item xl={12}>
                 <form method="post" className="commentForm" onSubmit={handleSubmit}>
                     <DialogTitle style={{ textAlign: "center", color: "#2196f3" }} id="login-dialog-title">
                         <Typography component="div">
                             <Box fontSize="h4.fontSize" fontWeight="fontWeightBold" m={1}>
                                 Friends Login
                              </Box>
-
                         </Typography>
                     </DialogTitle>
                     <DialogContent>
                         <div>
                             <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
-
                                 <InputLabel htmlFor="inputEmailLogin">Email</InputLabel>
                                 <OutlinedInput
                                     id="inputEmailLogin"
@@ -144,7 +144,6 @@ function Login(props) {
                         </div>
                         <div>
                             <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
-
                                 <InputLabel htmlFor="inputPasswordLogin">Password</InputLabel>
                                 <OutlinedInput
                                     id="inputPasswordLogin"
@@ -192,10 +191,10 @@ function Login(props) {
                         </Grid>
                     </DialogActions>
                 </form>
+            </Grid>
+        </Dialog>
 
-            </Dialog>
 
-        </div>
     );
 }
 

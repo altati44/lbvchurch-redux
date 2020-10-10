@@ -1,9 +1,10 @@
 
 import MaterialTable, { MTableToolbar } from 'material-table';
 import CardDetails from './CardDetails'
+import './datatable.css';
 //import TablePagination from '@material-ui/core/TablePagination';
 //import styled from 'styled-components';
-import { Button } from '@material-ui/core';
+import { Button, Paper } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import { ArrowForwardIosIcon, Ballot } from '@material-ui/icons';
@@ -84,6 +85,7 @@ const theme = createMuiTheme({
         },
 
 
+
         //fontSize: "18",
 
 
@@ -92,6 +94,14 @@ const theme = createMuiTheme({
 });
 
 function RemoteTable(props) {
+
+    props = {
+        ...props,
+        daColor: props.daColor,
+        daValor: props.daValor
+    }
+
+
 
     const { isShowing, toggle } = useModalFriend();//para el ModalFriend
 
@@ -154,7 +164,7 @@ function RemoteTable(props) {
         props.setFriendDateSelected(null);
         console.log('A cargar Datos de DETALLE', rowData);
         //console.log('A cargar Datos de DETALLE', props.friends.data.length);
-        loadFriendsSelected(rowData.friend_id);
+        loadFriendsSelected(rowData.id);
         //console.log(props.friendSelected.firstname + ' ' + props.friendSelected.middlename + ' ' + props.friendSelected.lastname);
     }
 
@@ -179,13 +189,17 @@ function RemoteTable(props) {
     }
 
     return (
-
-        <Grid container spacing={2}>
-            <Grid item xs={props.showDetails ? 9 : 12} >
+        <Grid
+            container spacing={2} className="contenedor-remote-table"
+            direction="row"
+            justify="space-evenly"
+            alignItems="flex-start"
+        >
+            <Grid item xs={props.showDetails ? 9 : 12} style={{ align: 'center' }} >
                 <MuiThemeProvider theme={theme}>
                     {/*<div style={{ padding: '0px 10px', color: '#FFFF', backgroundColor: '#4939d4' }}>
-                {props.friendSelected.firstname + ' ' + props.friendSelected.middlename + ' ' + props.friendSelected.lastname}
-            </div>*/}
+                     {props.friendSelected.firstname + ' ' + props.friendSelected.middlename + ' ' + props.friendSelected.lastname}
+                    </div>*/}
                     <MaterialTable
                         //title={[props.rowsCount, ' total(s) rows.']}
                         icons={tableIcons}
@@ -226,8 +240,10 @@ function RemoteTable(props) {
                                         }}>
                                         <Grid item xs={11} style={{ align: 'left', color: '#FFFF' }} >
 
-                                            <Typography noWrap align='left' style={{ color: 'rgb(238, 229, 214)' }}>
-                                                {props.friendSelected.firstname + ' ' + props.friendSelected.middlename + ' ' + props.friendSelected.lastname}
+                                            <Typography noWrap align='left' style={{ color: 'rgb(238, 229, 214)' }}>{/** + ' ' + props.friendSelected.middlename + ' ' + props.friendSelected.lastname} */}
+                                                {props.friendSelected.firstname != (null && '') ? props.friendSelected.firstname + ' ' : ''}
+                                                {props.friendSelected.middlename != (null && '') ? props.friendSelected.middlename + ' ' : ''}
+                                                {props.friendSelected.lastname != (null && '') ? props.friendSelected.lastname : ''}
                                             </Typography>
                                         </Grid>
 
@@ -238,7 +254,7 @@ function RemoteTable(props) {
                                                         vertical: 'top',
                                                         horizontal: 'right',
                                                     }}
-                                                    onClick={(evt) => showPanelView(evt)}//...........................................
+                                                    onClick={(evt) => showPanelView(evt)}//...........................................QUITARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
                                                 >
                                                     <AccountBalanceIcon style={{ color: '#fafafa' }} />
                                                 </Badge>
@@ -289,10 +305,12 @@ function RemoteTable(props) {
                             {
                                 tooltip: 'Remove All Selected Rows',
                                 icon: tableIcons.Delete,
+                                isFreeAction: true,
                                 onClick: (evt, data) => console.log(data)
                             },
                             {
                                 tooltip: 'Export All Selected Rows',
+                                isFreeAction: true,
                                 icon: tableIcons.Export,
                                 onClick: (evt, data) => console.log(data)
                             },
@@ -306,31 +324,48 @@ function RemoteTable(props) {
                         onRowClick={((evt, rowData) => rowClickHanddle(evt, rowData))}
 
                         options={{
+                            //actionsColumnIndex: 1,
                             search: true,
                             selection: true,
+                            selectionProps: rowData => ({
+                                //disabled: rowData.name === 'Mehmet',
+                                style: { color: '#7986cb' }
+                            }),
                             //toolbar: true,
+                            pagination: true,
                             showTitle: false,
                             pageSizeOptions: [5, 10, 20, 30, props.rowsCount],
                             // pageSizeOptions: [5, 10, 20, 30, { label: 'All', value: props.rowsCount }],//me da error por ser un objeto
                             //paginationType: 'stepped',
-                            exportButton: true,
+                            //exportButton: true,
                             printButton: true,
                             searchAutoFocus: true,
                             filtering: props.filterOptions,
+                            //doubleHorizontalScroll: true,
+                            //scrollStyle: { backgroundColor: 'red' },
                             headerStyle: {
                                 color: '#7986cb',
+                                //color: 'green',
                                 backgroundColor: '#ffe0b2',
                                 hoverColor: 'white',
-                                textAlign: 'center'
-                                //padding: '4px 8px 4px 8px'
+                                textAlign: 'center',
+                                //padding: '4px 8px 4px 8px',
+                                borderColor: 'red',
+                                borderTop: '3px',
+                                //position: "sticky", top: 0,
+                                //maxBodyHeight: "60vh"
                             },
+                            //actionsCellStyle: { backgroundColor: '#ffe0b2', },
+
                             rowStyle: rowData => ({
-                                backgroundColor: (props.selectedRow === rowData.tableData.id) ? '#e3f2fd' : '',
-                                //backgroundColor: rowData.tableData.checked ? '#e3f2fd' : '#FFF',
+                                backgroundColor: (props.selectedRow === rowData.tableData.id) ? props.daColor : '',
+                                padding: '2px 12px 2px 12px',
                                 whiteSpace: 'nowrap',//para que no me ponga el texto de la celda en wrap
-                                overflow: 'hidden',
+
+                                //overflow: 'hidden',
                                 textOverflow: 'ellipsis',
-                                boxSizing: 'borderbox'
+                                //boxSizing: 'borderbox',
+                                //boderBottom: '2px'
                             })
                         }}
                         editable={{
@@ -348,10 +383,10 @@ function RemoteTable(props) {
                                         data[index] = newData;
                                         const fields = Object.assign({}, newData);
                                         delete fields.tableData; //tableData de material-table, un campo con informacion
-                                        delete fields.friend_id; //borro pq no lo necesito y es autoincrementable y clave primaria
+                                        delete fields.id; //borro pq no lo necesito y es autoincrementable y clave primaria
                                         delete fields.created;//ignoro created_at para que no me de errores...pues es generado automaticamente
                                         axios
-                                            .put("http://localhost:5000/api/friends/" + oldData.friend_id, fields)
+                                            .put("http://localhost:5000/api/friends/" + oldData.id, fields)
                                             .then(res => {
                                                 //para redux                                    
                                                 props.setFriendsData(data);
@@ -367,7 +402,7 @@ function RemoteTable(props) {
                                         //data.splice(data.indexOf(oldData), 1);
                                         axios.defaults.headers.common['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxMDgsIm5hbWUiOiJubm5uIiwiZW1haWwiOiJubm5uQGdtYWlsLmNvbSJ9LCJpYXQiOjE1OTEyMzExMDksImV4cCI6MTU5MTMxNzUwOX0.y-Rwt5eyuHCJ-rdHRxJZvXBEdB3C4rw6ZJmEIjFB5sI';
                                         axios
-                                            .delete("http://localhost:5000/api/friends/" + oldData.friend_id)
+                                            .delete("http://localhost:5000/api/friends/" + oldData.id)
                                             .then((res) => {
                                                 if (res.data.success === 1) {
                                                     //console.log(res.data.success)
@@ -389,7 +424,7 @@ function RemoteTable(props) {
                                             .post('http://localhost:5000/api/friends/', newData)
                                             .then((res) => {
                                                 if (res.data.success !== 0) {
-                                                    newData = { "friend_id": res.data.id, ...newData }
+                                                    newData = { "id": res.data.id, ...newData }
                                                     data.push(newData);
                                                     console.log('added', newData)
                                                     props.setFriendsData(data);
@@ -402,9 +437,12 @@ function RemoteTable(props) {
                     />
                 </MuiThemeProvider>
             </Grid>
-            <Grid item xs={3}> {/**Panel derecho con los detalles del amigo */}
-                {props.showDetails && <CardDetails />}
-                {/**{showPanel && <PanelView />}BORRAR ESTO QUE ES SOLO DE PRUEBA............................................................... */}
+            <Grid item xs={3} id="card-details" border={1} style={{ align: 'center' }}> {/**Panel derecho con los detalles del amigo */}
+                <div style={{ minWidth: "310px", maxWidth: "310px", position: 'fixed' }}>
+                    {props.showDetails && <CardDetails />}
+                    {/**{showPanel && <PanelView />}BORRAR ESTO QUE ES SOLO DE PRUEBA............................................................... */}
+                </div>
+
             </Grid>
 
             <ModalFriend

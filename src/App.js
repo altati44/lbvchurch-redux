@@ -1,5 +1,8 @@
 import React from 'react';
 import clsx from 'clsx';
+
+import axios from "axios";
+
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -17,8 +20,15 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+
 import RemoteTable from './components/RemoteTable';
+import DataTable from './components/DataTable';
 import TableTest from './components/TableTest';
+import { Copyright } from './components/Copyright';
+import UsersAll from './components/UsersAll';
+import ComponentFriends from './components/ComponentFriends';
+import ComponentUsers from './components/ComponentUsers';
+
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import Container from '@material-ui/core/Container';
 import Fab from '@material-ui/core/Fab';
@@ -43,7 +53,7 @@ import Parser from 'html-react-parser';
 import Icon from '@material-ui/core/Icon';
 import { Ballot, PeopleAlt, Build, ViewModule } from '@material-ui/icons';
 
-
+// import './components/remotetable.css';
 
 import { useEffect } from "react";
 
@@ -52,6 +62,7 @@ import { Link } from 'react-router-dom';
 import { connect } from "react-redux";
 import { Grid } from '@material-ui/core';
 import MessageBox from './components/MessageBox';
+import UsersCard from './components/UsersCard';
 
 const drawerWidth = 240;
 
@@ -199,50 +210,48 @@ function App(props) {
         };
 
         return (
-            <React.Fragment>
-                <div>
-                    <Grid container spacing={1} style={{ alignItems: 'center' }}>
-                        <Grid item xs={10} style={{ align: 'right' }} >
-                            <Typography noWrap align='right' style={{ color: 'rgb(238, 229, 214)' }}>
-                                Welcome {props.user.userName}!
+            <div>
+                <Grid container spacing={1} style={{ alignItems: 'center' }}>
+                    <Grid item xs={10} style={{ align: 'right' }} >
+                        <Typography noWrap align='right' style={{ color: 'rgb(238, 229, 214)' }}>
+                            Welcome {props.user.userName}!
                         </Typography>
-                        </Grid>
-                        <Grid item xs={2} >
-                            <IconButton
-                                id="icon-auth"
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={(event) => { handleMenu(event) }}
-                                color="inherit"
-                            >
-                                <AccountCircle />
-                            </IconButton>
-                        </Grid>
                     </Grid>
-                    <Menu
-                        id="menu-appbar"
-                        elevation={8}
-                        anchorEl={anchorEl}//{anchorEl}
-                        getContentAnchorEl={null}
-                        //anchorReference={document.body.getElementsByTagName("icon-auth")}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                        }}
-                        keepMounted
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        open={openMenu}
-                        onClose={handleClose}
-                    >
-                        <MenuItem onClick={null}>Profile</MenuItem>
-                        <MenuItem onClick={props.logOut}>Logout</MenuItem>
-                    </Menu>
-                </div >
-            </React.Fragment>
+                    <Grid item xs={2} >
+                        <IconButton
+                            id="icon-auth"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={(event) => { handleMenu(event) }}
+                            color="inherit"
+                        >
+                            <AccountCircle />
+                        </IconButton>
+                    </Grid>
+                </Grid>
+                <Menu
+                    id="menu-appbar"
+                    elevation={8}
+                    anchorEl={anchorEl}//{anchorEl}
+                    getContentAnchorEl={null}
+                    //anchorReference={document.body.getElementsByTagName("icon-auth")}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={openMenu}
+                    onClose={handleClose}
+                >
+                    <MenuItem onClick={null}>Profile</MenuItem>
+                    <MenuItem onClick={props.logOut}>Logout</MenuItem>
+                </Menu>
+            </div >
         )
     }
     let cargaProfile = props.loadProfileData;//para hacer el juego de cargarlo solo una vez y no cada vez que....
@@ -278,6 +287,58 @@ function App(props) {
     const html = `<ListIcon/>`;
     //const converter = new ReactHTMLConverter();
     const someHtml = '<div><strong>blablabla<strong><p>another blbla</p/></div>';
+
+    /**cargando los detalles del amigo seleccionado... */
+    async function loadDetailsFromDataSelected(id) {
+        try {
+            axios.defaults.headers.common['Authorization'] = '';
+            const res = await axios.get('http://localhost:5000/api/friends/' + id);
+            console.log('res.data.success', res.data.success)
+            if (res.data.success === 1) {
+                //console.log(res.data.result[0].user_name)
+                //props.messageOpen(res.data.user.userName + ' ' + res.data.message, 'success')
+                //props.updateToken(res.data.token);
+                let rows = res.data.rows;
+                let arrayModules = [];
+                //console.log('res', res.data.rows)
+                if (rows.length > 0) {
+                    //props.setFriendDetails(rows)
+                    //props.setFriendDateSelected(0);
+                    props.setFriendDetails(rows);
+                    props.setFriendDateSelected(0);
+                } else {
+                    //props.setFriendDateSelected(null); props.setFriendDetails([])
+                    props.setFriendDateSelected(null); props.setFriendDetails([]);
+                }
+                /*
+                rows.forEach(element => {
+                    //console.log(element.module_id)
+                    arrayModules.push([element.module_id, element.module_display_name, element.module_icon, element.module_name, element.module_access])
+                })
+                arrayModules.sort((a, b) => a[0] - b[0]);
+                */
+                console.log('DETALLES???', props.friendDetails.length)
+            } else {
+                props.messageOpen(res.data.data, 'error')
+                console.log('NO DATTTTtttta', res.data.data)
+            }
+        } catch { props.messageOpen('Connection refused.', 'error') }
+    }
+
+    //Cuando ocurre un onClick sobre un campo de la tabla
+    function rowClickHanddle(evt, rowData) {
+        console.log('CORRECTO!!!!!!!', rowData.id);
+        // await props.setSelectedRow(rowData.tableData.id);
+        // await props.setFriendSelected(rowData);
+        // props.setFriendDateSelected(null);
+        props.setSelectedRow(rowData.tableData.id);
+        props.setFriendSelected(rowData);
+        props.setFriendDateSelected(null);
+        console.log('A cargar Datos de DETALLE', rowData);
+        //console.log('A cargar Datos de DETALLE', props.friends.data.length);
+        loadDetailsFromDataSelected(rowData.id);
+        //console.log(props.friendSelected.firstname + ' ' + props.friendSelected.middlename + ' ' + props.friendSelected.lastname);
+    }
 
 
     //para poner icono al menu desplegable de la izquierda
@@ -352,9 +413,6 @@ function App(props) {
                     <Divider />
                     <List>
 
-
-
-
                         {/*//aparecen los Link*/}
                         {props.userModules.map((text, index) => (
                             <Link to={text[3]} key={text[0]} style={{ textDecoration: 'none', color: 'black' }} >
@@ -386,7 +444,7 @@ function App(props) {
                         })}
                     >
                         <Toolbar className={classes.toolbar2} id="main-bar" />{/**solo para regresar el scroll */}
-                        <Container>
+                        <Container id="principal-container" maxWidth={false}>
                             <div >      {/*div del MessageBox*/}
                                 <MessageBox
                                     on_Close={props.messageClose}
@@ -405,24 +463,54 @@ function App(props) {
 
         */}
 
-                            <Route path="/friends" component={RemoteTable} />
-                            <Route path="/usersModules" component={TableTest} />
+                            <Route exact path="/friends" render={() => (<RemoteTable daColor='#e3f2fd' />)} />
+                            <Route exact path="/friendsDetails" render={() => (
+                                /*<DataTable
+                                    daColor='#e2fd'
+                                    data={props.data}
+                                    setData={props.setFriendsData}
+                                    columns={props.columns}
+                                    rowsCount={props.rowsCount}
+                                    setDataDetails={props.setFriendDetails}
+                                    setDataIndexSelected={props.setSelectedRow}
+                                    setDataSelected={props.setFriendSelected}
+                                    setDataDetailIndexSelected={props.setFriendDateSelected}
+                                    httpToServer="http://localhost:5000/api/friends/"//posible no necesario pq no se necesite una primera carga
+                                    rowClickHandlle={rowClickHanddle}
+                                />*/
+                                <ComponentUsers />)} />
+
+                            <Route exact path="/users" component={UsersAll} />
+                            <Route exact path="/usersModules" component={UsersCard} />
 
 
                         </Container>
                         <ScrollTop {...props}>
-                            <Fab style={{ color: '#fafafa', backgroundColor: 'rgba(0, 0,56, 0.2)' }} size="small" aria-label="scroll back to top">
-                                <KeyboardArrowUpIcon style={{ color: '#e83c11' }} />
+                            <Fab style={{ color: '#fafafa', backgroundColor: 'rgb(11 171 131 / 12%)' }} size="small" aria-label="scroll back to top">
+                                <KeyboardArrowUpIcon style={{ color: 'rgb(20 17 232)' }} />
                             </Fab>
+
                         </ScrollTop>
+                        <h1 style={{ minWidth: "310px", maxWidth: "310px", position: 'fixed' }}></h1>
                     </main>
+
                 </React.Fragment>
+
             </Router>
         </div>
     );
 }
 
 const mapStateToProps = state => ({
+    columns: state.columns,
+    token: state.token,
+    data: state.friends.data,
+    filterOptions: state.filterOptions,
+    friendSelected: state.friendSelected,
+    friendDetails: state.friendDetails,
+    user: state.user,
+    selectedRow: state.selectedRow,
+    showDetails: state.showDetails,
     mostrar: state.mostrar,
     user: state.user,
     login: state.login,
@@ -491,6 +579,60 @@ const mapDispatchToProps = dispatch => ({
         dispatch({
             type: "SET_PROFILE_DATA",
             loadProfileData
+        })
+    },
+    setFriendsData(data) {
+        dispatch({
+            type: "SET_FRIENDS_DATA",
+            data
+        })
+    },
+    updateFriendsData(newData, index) {
+        dispatch({
+            type: "UPDATE_FRIENDS_DATA",
+            newData,
+            index
+        })
+    },
+    setElemento(rowsCount) {
+        dispatch({
+            type: "SET_ROWS_COUNT",
+            rowsCount
+        })
+    },
+    setFilterOptions(filterOptions) {
+        dispatch({
+            type: "SET_FILTER_OPTIONS",
+            filterOptions
+        })
+    },
+    setFriendSelected(friendSelected) {
+        dispatch({
+            type: "SET_FRIEND_SELECTED",
+            friendSelected
+        })
+    },
+    setFriendDetails(friendDetails) {
+        dispatch({
+            type: "SET_FRIEND_DETAILS",
+            friendDetails
+        })
+    },
+    setShowDetails() {
+        dispatch({
+            type: "SET_SHOW_DETAILS"
+        })
+    },
+    setSelectedRow(selectedRow) {
+        dispatch({
+            type: "SET_SELECTED_ROW",
+            selectedRow
+        })
+    },
+    setFriendDateSelected(friendDateSelected) {
+        dispatch({
+            type: "SET_FRIEND_DATE_SELECTED",
+            friendDateSelected
         })
     }
 });

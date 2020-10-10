@@ -2,6 +2,7 @@ import React from 'react';
 
 import { forwardRef } from 'react';
 import './tableTest.css';
+import './datatable.css';
 
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -54,10 +55,7 @@ const theme = createMuiTheme({
             main: '#ff9100',
         },
         fontSize: "18",
-
-
     }
-
 });
 
 function TableTest(props) {
@@ -90,7 +88,6 @@ function TableTest(props) {
                 props.messageOpen(rowData.name, 'warning')
             }}
             style={{ backgroundColor: '#bbe1ff', boxShadow: '0', border: '0', padding: '0', fontSize: '16' }}
-
             icons={tableIcons}
             options={{
                 actionsColumnIndex: -1,
@@ -147,7 +144,6 @@ function TableTest(props) {
                     }),
             }}
         />
-
     );
 }
 

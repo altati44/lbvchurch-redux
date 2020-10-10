@@ -240,6 +240,17 @@ const reducer = (state = {}, action) => {
                 ...state,
                 referencia: action.referencia
             }
+        case "SET_DATA_USERS":
+            return {
+                ...state,
+                dataUsers: action.data,
+                usersRowsCount: action.data.length
+            }
+        case "SET_DATA_USER_SELECTED":
+            return {
+                ...state,
+                dataUserSelected: action.dataUserSelected
+            }
 
         default: return state;
     }

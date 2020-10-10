@@ -1,0 +1,17 @@
+
+/* div.Component-horizontalScrollContainer-541 ::-webkit-scrollbar-thumb {
+    border: .0px solid white; 
+    border-radius: 4px;
+    background-color: #3f87a6;
+
+div.Component-horizontalScrollContainer-1194{
+    border: .0px solid white; 
+    border-radius: 4px;
+    background-color: #3f87a6;
+}
+} */
+.contenedor-remote-table div::-webkit-scrollbar-thumb {
+    border: .0px solid white; 
+    border-radius: 4px;
+    background-color: #3f87a6;/*#6e8e6f54*/
+} 

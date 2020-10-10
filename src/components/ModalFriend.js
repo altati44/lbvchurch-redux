@@ -118,7 +118,7 @@ const IconFunction = (icon) => {
         default: return null
     }
 
-DELETE FROM`lbvdatabase`.`lbv_friends` WHERE`friend_id` IN (91, 93);
+DELETE FROM`lbvdatabase`.`lbv_friends` WHERE`id` IN (91, 93);
    DAUR
 00 0000
 01 0001
